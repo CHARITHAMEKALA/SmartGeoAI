@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SmartGeoAI - Address Intelligence</title>
+
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+
+    <!-- Leaflet Map CSS -->
+    <link rel="stylesheet"
+    href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <h1>🚀 SmartGeoAI</h1>
+
+    <p>
+        AI Address Parsing & Location Intelligence
+    </p>
+
+
+
+    <!-- Address Input -->
+
+    <textarea 
+        id="addressInput"
+        placeholder="Enter messy Indian address..."
+    ></textarea>
+
+
+    <button onclick="resolveAddress()">
+        Resolve Address
+    </button>
+
+
+
+    <!-- Result Section -->
+
+
+    <div class="result">
+
+
+        <h2>📍 Result</h2>
+
+
+        <div id="output">
+
+            Waiting for address...
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- Map -->
+
+
+    <h2>🗺️ Location Map</h2>
+
+
+    <div id="map"></div>
+
+
+</div>
+
+
+
+
+<!-- Leaflet JS -->
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+
+<!-- Main JS -->
+
+<script src="script.js"></script>
+
+
+</body>
+
+</html>
