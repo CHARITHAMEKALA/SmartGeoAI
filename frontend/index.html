@@ -1,22 +1,1059 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartGeoAI | Address Intelligence</title>
 
-    <title>SmartGeoAI - Address Intelligence</title>
+<link
+rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+<style>
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:
+        Inter,
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef4ff 0%,
+            #f8fbff 50%,
+            #eef7ff 100%
+        );
+
+    color:#172033;
+}
+
+button,
+textarea{
+    font-family:inherit;
+}
+
+button{
+    cursor:pointer;
+}
 
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header{
+
+    background:
+        linear-gradient(
+            135deg,
+            #0b1f57,
+            #123c91,
+            #1769aa
+        );
+
+    color:white;
+
+    padding:
+        18px
+        6%;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    box-shadow:
+        0 5px 25px
+        rgba(16,42,114,.25);
+}
+
+.brand{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:13px;
+}
+
+.logo{
+
+    width:52px;
+
+    height:52px;
+
+    border-radius:15px;
+
+    background:white;
+
+    color:#1769aa;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:27px;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0,0,0,.15);
+}
+
+.brand h1{
+
+    margin:0;
+
+    font-size:26px;
+
+    letter-spacing:.2px;
+}
+
+.brand p{
+
+    margin:
+        4px
+        0
+        0;
+
+    font-size:12px;
+
+    opacity:.82;
+}
+
+.status{
+
+    background:
+        rgba(255,255,255,.13);
+
+    border:
+        1px solid
+        rgba(255,255,255,.18);
+
+    padding:
+        9px
+        15px;
+
+    border-radius:25px;
+
+    font-size:13px;
+}
+
+.status-dot{
+
+    display:inline-block;
+
+    width:9px;
+
+    height:9px;
+
+    background:#35e58a;
+
+    border-radius:50%;
+
+    margin-right:6px;
+
+    box-shadow:
+        0 0 10px
+        #35e58a;
+}
 
 
-    <!-- Leaflet Map CSS -->
-    <link rel="stylesheet"
-    href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+
+.container{
+
+    width:90%;
+
+    max-width:1250px;
+
+    margin:
+        32px
+        auto
+        60px;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero{
+
+    text-align:center;
+
+    margin-bottom:28px;
+}
+
+.hero h2{
+
+    margin:0;
+
+    color:#0b1f57;
+
+    font-size:34px;
+}
+
+.hero p{
+
+    color:#667085;
+
+    margin-top:9px;
+
+    font-size:15px;
+}
+
+
+/* =========================================================
+   SEARCH CARD
+========================================================= */
+
+.search-card{
+
+    background:white;
+
+    padding:27px;
+
+    border-radius:22px;
+
+    box-shadow:
+        0 12px 40px
+        rgba(32,70,130,.10);
+
+    border:
+        1px solid
+        #edf2f8;
+}
+
+.search-title{
+
+    font-weight:800;
+
+    color:#0b1f57;
+
+    font-size:18px;
+
+    margin-bottom:12px;
+}
+
+.search-subtitle{
+
+    color:#667085;
+
+    font-size:13px;
+
+    margin-bottom:13px;
+}
+
+textarea{
+
+    width:100%;
+
+    min-height:95px;
+
+    resize:vertical;
+
+    border:
+        2px solid
+        #e3eaf5;
+
+    border-radius:15px;
+
+    padding:15px;
+
+    font-size:15px;
+
+    outline:none;
+
+    transition:.2s;
+}
+
+textarea:focus{
+
+    border-color:#1769aa;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(23,105,170,.08);
+}
+
+.button-row{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:10px;
+
+    margin-top:15px;
+}
+
+.primary-btn{
+
+    border:none;
+
+    color:white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1769aa,
+            #102a72
+        );
+
+    padding:
+        13px
+        24px;
+
+    border-radius:11px;
+
+    font-size:14px;
+
+    font-weight:700;
+
+    box-shadow:
+        0 7px 18px
+        rgba(16,42,114,.20);
+}
+
+.primary-btn:hover{
+
+    transform:translateY(-1px);
+}
+
+.secondary-btn{
+
+    border:
+        1px solid
+        #dce4ef;
+
+    background:#f7f9fc;
+
+    color:#344054;
+
+    padding:
+        13px
+        20px;
+
+    border-radius:11px;
+
+    font-size:14px;
+
+    font-weight:700;
+}
+
+.quick-title{
+
+    margin-top:20px;
+
+    margin-bottom:9px;
+
+    color:#667085;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    text-transform:uppercase;
+
+    letter-spacing:.5px;
+}
+
+.quick-buttons{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:8px;
+}
+
+.quick-btn{
+
+    border:none;
+
+    background:#eef5ff;
+
+    color:#1769aa;
+
+    padding:
+        9px
+        13px;
+
+    border-radius:9px;
+
+    font-size:12px;
+
+    font-weight:700;
+}
+
+.quick-btn:hover{
+
+    background:#dfeeff;
+}
+
+.quick-invalid{
+
+    background:#fff0f0;
+
+    color:#d92d20;
+}
+
+#statusMessage{
+
+    margin-top:13px;
+
+    font-size:13px;
+
+    font-weight:700;
+}
+
+
+/* =========================================================
+   RESULTS
+========================================================= */
+
+.results{
+
+    display:none;
+}
+
+.section-title{
+
+    margin:
+        30px
+        0
+        15px;
+
+    font-size:21px;
+
+    color:#0b1f57;
+
+    font-weight:800;
+}
+
+
+/* =========================================================
+   STAT CARDS
+========================================================= */
+
+.stats{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:15px;
+}
+
+.stat-card{
+
+    background:white;
+
+    padding:20px;
+
+    border-radius:18px;
+
+    box-shadow:
+        0 8px 28px
+        rgba(32,70,130,.08);
+
+    position:relative;
+
+    overflow:hidden;
+
+    border:
+        1px solid
+        #edf2f8;
+}
+
+.stat-icon{
+
+    font-size:25px;
+}
+
+.stat-label{
+
+    color:#667085;
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    margin-top:9px;
+
+    letter-spacing:.5px;
+}
+
+.stat-value{
+
+    color:#0b1f57;
+
+    font-size:21px;
+
+    font-weight:800;
+
+    margin-top:5px;
+
+    word-break:break-word;
+}
+
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.verification{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:9px;
+
+    margin:
+        18px
+        0;
+}
+
+.badge{
+
+    padding:
+        9px
+        14px;
+
+    border-radius:20px;
+
+    font-size:12px;
+
+    font-weight:800;
+}
+
+.success{
+
+    background:#e7f8ef;
+
+    color:#16834d;
+}
+
+.warning{
+
+    background:#fff5df;
+
+    color:#b77900;
+}
+
+.danger{
+
+    background:#ffe8e8;
+
+    color:#d92d20;
+}
+
+
+/* =========================================================
+   MAIN GRID
+========================================================= */
+
+.main-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        1.15fr
+        .85fr;
+
+    gap:20px;
+
+    margin-top:20px;
+}
+
+.panel{
+
+    background:white;
+
+    padding:23px;
+
+    border-radius:20px;
+
+    box-shadow:
+        0 8px 28px
+        rgba(32,70,130,.08);
+
+    border:
+        1px solid
+        #edf2f8;
+}
+
+.panel h3{
+
+    margin-top:0;
+
+    color:#0b1f57;
+
+    font-size:17px;
+}
+
+
+/* =========================================================
+   ADDRESS DETAILS
+========================================================= */
+
+.location-details{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:12px;
+}
+
+.location-item{
+
+    background:#f7f9fc;
+
+    padding:14px;
+
+    border-radius:11px;
+
+    border:
+        1px solid
+        #edf1f7;
+}
+
+.location-item span{
+
+    display:block;
+
+    color:#667085;
+
+    font-size:11px;
+
+    text-transform:uppercase;
+
+    letter-spacing:.4px;
+}
+
+.location-item strong{
+
+    display:block;
+
+    margin-top:5px;
+
+    font-size:14px;
+
+    word-break:break-word;
+}
+
+
+/* =========================================================
+   CONFIDENCE
+========================================================= */
+
+.confidence-panel{
+
+    text-align:center;
+}
+
+.meter{
+
+    width:155px;
+
+    height:155px;
+
+    margin:
+        12px
+        auto
+        15px;
+
+    border-radius:50%;
+
+    background:
+        conic-gradient(
+            #1769aa 0deg,
+            #e9eef7 0deg
+        );
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    position:relative;
+}
+
+.meter::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:121px;
+
+    height:121px;
+
+    background:white;
+
+    border-radius:50%;
+}
+
+.meter-text{
+
+    position:relative;
+
+    z-index:2;
+
+    font-size:30px;
+
+    font-weight:900;
+
+    color:#0b1f57;
+}
+
+.confidence-level{
+
+    display:inline-block;
+
+    padding:
+        7px
+        17px;
+
+    border-radius:20px;
+
+    background:#e7f8ef;
+
+    color:#16834d;
+
+    font-weight:800;
+
+    font-size:12px;
+}
+
+.decision{
+
+    margin-top:12px;
+
+    font-weight:800;
+
+    font-size:16px;
+}
+
+.evidence{
+
+    text-align:left;
+
+    margin-top:18px;
+}
+
+.evidence div{
+
+    padding:
+        8px
+        0;
+
+    border-bottom:
+        1px solid
+        #edf1f7;
+
+    font-size:13px;
+}
+
+
+/* =========================================================
+   NORMALIZED ADDRESS
+========================================================= */
+
+.address-box{
+
+    background:#f5f8ff;
+
+    padding:17px;
+
+    border-radius:12px;
+
+    line-height:1.6;
+
+    border-left:
+        4px solid
+        #1769aa;
+
+    font-size:14px;
+}
+
+.action-buttons{
+
+    display:flex;
+
+    gap:8px;
+
+    margin-top:13px;
+}
+
+.small-btn{
+
+    border:none;
+
+    padding:
+        9px
+        13px;
+
+    border-radius:9px;
+
+    font-size:12px;
+
+    font-weight:700;
+
+    background:#eef5ff;
+
+    color:#1769aa;
+}
+
+
+/* =========================================================
+   MAP
+========================================================= */
+
+.map-panel{
+
+    margin-top:20px;
+}
+
+.map-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:10px;
+}
+
+.map-info{
+
+    font-size:12px;
+
+    color:#667085;
+}
+
+#map{
+
+    height:450px;
+
+    margin-top:13px;
+
+    border-radius:15px;
+
+    overflow:hidden;
+
+    border:
+        1px solid
+        #dfe7f2;
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+.history-card{
+
+    margin-top:20px;
+
+    background:white;
+
+    padding:23px;
+
+    border-radius:20px;
+
+    box-shadow:
+        0 8px 28px
+        rgba(32,70,130,.08);
+}
+
+.history-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+}
+
+.history-header h3{
+
+    margin:0;
+
+    color:#0b1f57;
+}
+
+.clear-history{
+
+    border:none;
+
+    background:#fff0f0;
+
+    color:#d92d20;
+
+    padding:
+        7px
+        11px;
+
+    border-radius:8px;
+
+    font-size:11px;
+
+    font-weight:700;
+}
+
+.history-item{
+
+    padding:13px;
+
+    margin-top:9px;
+
+    border-radius:11px;
+
+    background:#f7f9fc;
+
+    border:
+        1px solid
+        #edf1f7;
+
+    cursor:pointer;
+}
+
+.history-item:hover{
+
+    background:#edf5ff;
+}
+
+.history-address{
+
+    font-weight:700;
+
+    font-size:13px;
+}
+
+.history-meta{
+
+    font-size:11px;
+
+    color:#667085;
+
+    margin-top:5px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer{
+
+    text-align:center;
+
+    color:#667085;
+
+    font-size:12px;
+
+    padding:25px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+    .stats{
+
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .main-grid{
+
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:600px){
+
+    .header{
+
+        padding:
+            15px
+            4%;
+    }
+
+    .status{
+
+        display:none;
+    }
+
+    .container{
+
+        width:94%;
+    }
+
+    .hero h2{
+
+        font-size:27px;
+    }
+
+    .stats{
+
+        grid-template-columns:1fr;
+    }
+
+    .location-details{
+
+        grid-template-columns:1fr;
+    }
+
+    .button-row{
+
+        flex-direction:column;
+    }
+
+    .primary-btn,
+    .secondary-btn{
+
+        width:100%;
+    }
+
+    #map{
+
+        height:350px;
+    }
+}
+
+</style>
 
 </head>
 
@@ -24,75 +1061,1665 @@
 <body>
 
 
-<div class="container">
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="header">
+
+<div class="brand">
+
+<div class="logo">
+📍
+</div>
+
+<div>
+
+<h1>
+SmartGeoAI
+</h1>
+
+<p>
+AI-Powered Indian Address Intelligence
+</p>
+
+</div>
+
+</div>
 
 
-    <h1>🚀 SmartGeoAI</h1>
+<div class="status">
 
-    <p>
-        AI Address Parsing & Location Intelligence
-    </p>
+<span class="status-dot"></span>
 
+System Online
 
+</div>
 
-    <!-- Address Input -->
-
-    <textarea 
-        id="addressInput"
-        placeholder="Enter messy Indian address..."
-    ></textarea>
-
-
-    <button onclick="resolveAddress()">
-        Resolve Address
-    </button>
-
-
-
-    <!-- Result Section -->
-
-
-    <div class="result">
-
-
-        <h2>📍 Result</h2>
-
-
-        <div id="output">
-
-            Waiting for address...
-
-        </div>
-
-
-    </div>
+</header>
 
 
 
-    <!-- Map -->
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="container">
 
 
-    <h2>🗺️ Location Map</h2>
+<section class="hero">
+
+<h2>
+Resolve. Verify. Locate.
+</h2>
+
+<p>
+Convert unstructured Indian addresses into verified geographic information.
+</p>
+
+</section>
 
 
-    <div id="map"></div>
+
+<!-- =========================================================
+     SEARCH
+========================================================= -->
+
+<section class="search-card">
+
+<div class="search-title">
+
+🔎 Address Search
+
+</div>
+
+<div class="search-subtitle">
+
+Enter an Indian address to identify its pincode,
+location, landmark and verification confidence.
+
+</div>
+
+
+<textarea
+id="address"
+placeholder="Enter address here..."
+></textarea>
+
+
+<div class="button-row">
+
+<button
+type="button"
+class="secondary-btn"
+onclick="clearSearch()"
+>
+
+✕ Clear
+
+</button>
+
+
+<button
+id="resolveButton"
+type="button"
+class="primary-btn"
+onclick="resolveAddress()"
+>
+
+🔍 Search Address
+
+</button>
+
+</div>
+
+
+<div class="quick-title">
+
+Quick Demo
+
+</div>
+
+
+<div class="quick-buttons">
+
+
+<button
+type="button"
+class="quick-btn"
+onclick="demoSearch(
+'Near Railway Station, Vijayawada, 520010'
+)"
+>
+
+📍 Vijayawada
+
+</button>
+
+
+<button
+type="button"
+class="quick-btn"
+onclick="demoSearch(
+'Near Bus Stand, Guntur, 522001'
+)"
+>
+
+📍 Guntur
+
+</button>
+
+
+<button
+type="button"
+class="quick-btn quick-invalid"
+onclick="demoSearch(
+'Near Railway Station, Vijayawada, 999999'
+)"
+>
+
+❌ Invalid Pincode
+
+</button>
+
+
+</div>
+
+
+<div id="statusMessage"></div>
+
+
+</section>
+
+
+
+<!-- =========================================================
+     RESULTS
+========================================================= -->
+
+<section
+id="results"
+class="results"
+>
+
+
+<div class="section-title">
+
+📊 Address Intelligence
+
+</div>
+
+
+
+<!-- STATISTICS -->
+
+<div class="stats">
+
+
+<div class="stat-card">
+
+<div class="stat-icon">
+📮
+</div>
+
+<div class="stat-label">
+Pincode
+</div>
+
+<div
+id="pincode"
+class="stat-value"
+>
+-
+</div>
+
+</div>
+
+
+<div class="stat-card">
+
+<div class="stat-icon">
+📍
+</div>
+
+<div class="stat-label">
+Location
+</div>
+
+<div
+id="city"
+class="stat-value"
+>
+-
+</div>
+
+</div>
+
+
+<div class="stat-card">
+
+<div class="stat-icon">
+🏛️
+</div>
+
+<div class="stat-label">
+District
+</div>
+
+<div
+id="district"
+class="stat-value"
+>
+-
+</div>
+
+</div>
+
+
+<div class="stat-card">
+
+<div class="stat-icon">
+🎯
+</div>
+
+<div class="stat-label">
+Confidence
+</div>
+
+<div
+id="confidenceSmall"
+class="stat-value"
+>
+-
+</div>
+
+</div>
 
 
 </div>
 
 
 
+<!-- VERIFICATION BADGES -->
 
-<!-- Leaflet JS -->
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<div class="verification">
 
 
-<!-- Main JS -->
+<div
+id="pinBadge"
+class="badge success"
+>
+📮 PINCODE ✓
+</div>
 
-<script src="script.js"></script>
 
+<div
+id="locationBadge"
+class="badge success"
+>
+📍 LOCATION ✓
+</div>
+
+
+<div
+id="landmarkBadge"
+class="badge success"
+>
+🏷️ LANDMARK ✓
+</div>
+
+
+<div
+id="addressBadge"
+class="badge success"
+>
+✓ ADDRESS ✓
+</div>
+
+
+</div>
+
+
+
+<!-- DETAILS + CONFIDENCE -->
+
+<div class="main-grid">
+
+
+<div class="panel">
+
+<h3>
+📋 Address Results
+</h3>
+
+
+<div class="location-details">
+
+
+<div class="location-item">
+
+<span>
+Original Address
+</span>
+
+<strong id="original">
+-
+</strong>
+
+</div>
+
+
+<div class="location-item">
+
+<span>
+Landmark
+</span>
+
+<strong id="landmark">
+-
+</strong>
+
+</div>
+
+
+<div class="location-item">
+
+<span>
+City
+</span>
+
+<strong id="city2">
+-
+</strong>
+
+</div>
+
+
+<div class="location-item">
+
+<span>
+State
+</span>
+
+<strong id="state">
+-
+</strong>
+
+</div>
+
+
+<div class="location-item">
+
+<span>
+Latitude
+</span>
+
+<strong id="latitude">
+-
+</strong>
+
+</div>
+
+
+<div class="location-item">
+
+<span>
+Longitude
+</span>
+
+<strong id="longitude">
+-
+</strong>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+
+<!-- CONFIDENCE -->
+
+<div class="panel confidence-panel">
+
+<h3>
+🎯 AI Confidence
+</h3>
+
+
+<div
+id="meter"
+class="meter"
+>
+
+<div
+id="confidenceScore"
+class="meter-text"
+>
+-
+</div>
+
+</div>
+
+
+<div
+id="confidenceLevel"
+class="confidence-level"
+>
+-
+</div>
+
+
+<div
+id="decision"
+class="decision"
+>
+-
+</div>
+
+
+<div
+id="evidence"
+class="evidence"
+>
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+<!-- NORMALIZED + SUMMARY -->
+
+<div class="main-grid">
+
+
+<div class="panel">
+
+<h3>
+✨ Normalized Address
+</h3>
+
+
+<div
+id="normalized"
+class="address-box"
+>
+-
+</div>
+
+
+<div class="action-buttons">
+
+
+<button
+class="small-btn"
+onclick="copyNormalized()"
+>
+📋 Copy
+</button>
+
+
+<button
+class="small-btn"
+onclick="downloadResult()"
+>
+⬇ Download JSON
+</button>
+
+
+</div>
+
+
+</div>
+
+
+
+<div class="panel">
+
+<h3>
+🛡️ Verification Summary
+</h3>
+
+
+<div
+id="summary"
+class="address-box"
+>
+
+Waiting for address verification...
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+<!-- MAP -->
+
+<div class="panel map-panel">
+
+
+<div class="map-header">
+
+<h3>
+🗺️ Interactive Location Map
+</h3>
+
+
+<div
+id="mapInfo"
+class="map-info"
+>
+Waiting for coordinates
+</div>
+
+
+</div>
+
+
+<div id="map"></div>
+
+
+</div>
+
+
+
+<!-- HISTORY -->
+
+<div class="history-card">
+
+
+<div class="history-header">
+
+<h3>
+🕘 Recent Searches
+</h3>
+
+
+<button
+class="clear-history"
+onclick="clearHistory()"
+>
+
+Clear History
+
+</button>
+
+</div>
+
+
+<div id="history">
+
+<div
+style="
+color:#667085;
+font-size:13px;
+margin-top:12px;
+"
+>
+
+No searches yet.
+
+</div>
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+</main>
+
+
+
+<footer class="footer">
+
+SmartGeoAI • AI-Based Address Resolution and Verification
+
+</footer>
+
+
+
+<script
+src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
+
+
+
+<script>
+
+/* =========================================================
+   GLOBAL VARIABLES
+========================================================= */
+
+let map = null;
+
+let marker = null;
+
+let searchHistory = [];
+
+let latestResult = null;
+
+
+/* =========================================================
+   RESOLVE ADDRESS
+========================================================= */
+
+async function resolveAddress(){
+
+    const address =
+        document
+        .getElementById("address")
+        .value
+        .trim();
+
+
+    const button =
+        document
+        .getElementById("resolveButton");
+
+
+    const status =
+        document
+        .getElementById("statusMessage");
+
+
+    if(!address){
+
+        status.innerHTML =
+            '<span style="color:#d92d20;">' +
+            'Please enter an address.' +
+            '</span>';
+
+        return;
+    }
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "⏳ Resolving...";
+
+
+    status.innerHTML =
+        '<span style="color:#1769aa;">' +
+        'Analyzing address and verifying location...' +
+        '</span>';
+
+
+    try{
+
+        const response =
+            await fetch(
+                "/resolve_address",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            address:address
+                        })
+                }
+            );
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "Backend returned an error"
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        latestResult = data;
+
+
+        displayResults(data);
+
+
+        document
+            .getElementById("results")
+            .style.display =
+            "block";
+
+
+        status.innerHTML =
+            '<span style="color:#16834d;">' +
+            '✓ Address resolved successfully.' +
+            '</span>';
+
+
+        addHistory(data);
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        status.innerHTML =
+            '<span style="color:#d92d20;">' +
+            '✗ Unable to connect to SmartGeoAI backend.' +
+            '</span>';
+
+    }
+
+
+    button.disabled = false;
+
+    button.textContent =
+        "🔍 Search Address";
+
+}
+
+
+/* =========================================================
+   DISPLAY RESULTS
+========================================================= */
+
+function displayResults(data){
+
+    const parsed =
+        data.parsed_address;
+
+
+    const validation =
+        data.pincode_validation;
+
+
+    const location =
+        data.location;
+
+
+    const confidence =
+        data.confidence;
+
+
+    const normalized =
+        data.normalized_address;
+
+
+    const landmark =
+        data.landmark_evidence;
+
+
+
+    /* BASIC INFORMATION */
+
+    setText(
+        "original",
+        data.original_address ||
+        "Not available"
+    );
+
+
+    setText(
+        "landmark",
+        parsed.landmark ||
+        "Not detected"
+    );
+
+
+    setText(
+        "city",
+        parsed.city ||
+        "Not detected"
+    );
+
+
+    setText(
+        "city2",
+        parsed.city ||
+        "Not detected"
+    );
+
+
+    setText(
+        "state",
+        parsed.state ||
+        "Not detected"
+    );
+
+
+    setText(
+        "pincode",
+        validation.pincode ||
+        "Not available"
+    );
+
+
+    setText(
+        "district",
+        validation.district ||
+        "Not available"
+    );
+
+
+    setText(
+        "latitude",
+
+        location.latitude !== null
+        ? location.latitude
+        : "Not available"
+    );
+
+
+    setText(
+        "longitude",
+
+        location.longitude !== null
+        ? location.longitude
+        : "Not available"
+    );
+
+
+
+    /* CONFIDENCE */
+
+    const score =
+        Number(
+            confidence.score || 0
+        );
+
+
+    setText(
+        "confidenceScore",
+        score + "%"
+    );
+
+
+    setText(
+        "confidenceSmall",
+        score + "%"
+    );
+
+
+    const angle =
+        (score / 100) * 360;
+
+
+    let meterColor =
+        "#1769aa";
+
+
+    if(score < 50){
+
+        meterColor =
+            "#d92d20";
+
+    }
+    else if(score < 80){
+
+        meterColor =
+            "#f59e0b";
+    }
+
+
+    document
+        .getElementById("meter")
+        .style.background =
+        `conic-gradient(
+            ${meterColor}
+            ${angle}deg,
+            #e9eef7
+            ${angle}deg
+        )`;
+
+
+    setText(
+        "confidenceLevel",
+        confidence.level ||
+        "UNKNOWN"
+    );
+
+
+    setText(
+        "decision",
+        confidence.decision ||
+        "Needs verification"
+    );
+
+
+
+    /* EVIDENCE */
+
+    const evidence =
+        document.getElementById(
+            "evidence"
+        );
+
+
+    evidence.innerHTML = "";
+
+
+    if(
+        confidence.evidence &&
+        confidence.evidence.length
+    ){
+
+        confidence.evidence.forEach(
+            function(item){
+
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+                div.textContent =
+                    item;
+
+                evidence.appendChild(
+                    div
+                );
+
+            }
+        );
+
+    }
+
+
+
+    /* NORMALIZED */
+
+    const normalizedAddress =
+        normalized.formatted_address ||
+        "Not available";
+
+
+    setText(
+        "normalized",
+        normalizedAddress
+    );
+
+
+
+    /* SUMMARY */
+
+    const summary =
+        document.getElementById(
+            "summary"
+        );
+
+
+    if(confidence.level === "HIGH"){
+
+        summary.innerHTML =
+            "✓ Strong verification evidence. " +
+            "This address can be auto-confirmed.";
+
+    }
+    else if(
+        confidence.level === "MEDIUM"
+    ){
+
+        summary.innerHTML =
+            "⚠ Partial verification evidence. " +
+            "Additional verification is recommended.";
+
+    }
+    else{
+
+        summary.innerHTML =
+            "✗ Address could not be reliably " +
+            "verified. Manual verification is recommended.";
+
+    }
+
+
+
+    /* BADGES */
+
+    setBadge(
+        "pinBadge",
+        validation.valid,
+        "📮 PINCODE"
+    );
+
+
+    setBadge(
+        "locationBadge",
+        location.found,
+        "📍 LOCATION"
+    );
+
+
+    setBadge(
+        "landmarkBadge",
+        landmark.found,
+        "🏷️ LANDMARK"
+    );
+
+
+    setBadge(
+        "addressBadge",
+        Boolean(
+            parsed.city &&
+            parsed.pincode
+        ),
+        "✓ ADDRESS"
+    );
+
+
+
+    /* MAP */
+
+    if(
+        location.found &&
+        location.latitude !== null &&
+        location.longitude !== null
+    ){
+
+        showMap(
+            Number(location.latitude),
+            Number(location.longitude),
+            normalizedAddress
+        );
+
+    }
+    else{
+
+        clearMap();
+
+    }
+
+}
+
+
+/* =========================================================
+   TEXT HELPER
+========================================================= */
+
+function setText(id,value){
+
+    document
+        .getElementById(id)
+        .textContent =
+        value;
+
+}
+
+
+/* =========================================================
+   BADGE
+========================================================= */
+
+function setBadge(
+    id,
+    valid,
+    text
+){
+
+    const badge =
+        document
+        .getElementById(id);
+
+
+    if(valid){
+
+        badge.className =
+            "badge success";
+
+        badge.textContent =
+            text + " ✓";
+
+    }
+    else{
+
+        badge.className =
+            "badge danger";
+
+        badge.textContent =
+            text + " ✗";
+
+    }
+
+}
+
+
+/* =========================================================
+   MAP
+========================================================= */
+
+function showMap(
+    latitude,
+    longitude,
+    address
+){
+
+    if(map === null){
+
+        map =
+            L.map("map")
+            .setView(
+                [
+                    latitude,
+                    longitude
+                ],
+                15
+            );
+
+
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                maxZoom:19,
+
+                attribution:
+                    "&copy; OpenStreetMap contributors"
+            }
+        ).addTo(map);
+
+    }
+    else{
+
+        map.setView(
+            [
+                latitude,
+                longitude
+            ],
+            15
+        );
+
+    }
+
+
+    if(marker !== null){
+
+        marker.remove();
+
+    }
+
+
+    marker =
+        L.marker(
+            [
+                latitude,
+                longitude
+            ]
+        )
+        .addTo(map);
+
+
+    marker.bindPopup(
+
+        "<b>📍 SmartGeoAI Location</b>" +
+
+        "<br><br>" +
+
+        address +
+
+        "<br><br>" +
+
+        "<b>Latitude:</b> " +
+
+        latitude +
+
+        "<br>" +
+
+        "<b>Longitude:</b> " +
+
+        longitude
+
+    );
+
+
+    marker.openPopup();
+
+
+    setText(
+        "mapInfo",
+
+        latitude +
+        " , " +
+        longitude
+    );
+
+
+    setTimeout(
+        function(){
+
+            map.invalidateSize();
+
+        },
+        300
+    );
+
+}
+
+
+/* =========================================================
+   CLEAR MAP
+========================================================= */
+
+function clearMap(){
+
+    if(map !== null){
+
+        map.remove();
+
+        map = null;
+
+        marker = null;
+
+    }
+
+
+    document.getElementById(
+        "map"
+    ).innerHTML =
+
+        '<div style="' +
+
+        'height:100%;' +
+
+        'display:flex;' +
+
+        'align-items:center;' +
+
+        'justify-content:center;' +
+
+        'color:#667085;' +
+
+        'font-size:14px;' +
+
+        '">' +
+
+        '📍 Location coordinates unavailable.' +
+
+        '</div>';
+
+
+    setText(
+        "mapInfo",
+        "Coordinates unavailable"
+    );
+
+}
+
+
+/* =========================================================
+   QUICK DEMO
+========================================================= */
+
+function demoSearch(address){
+
+    document
+        .getElementById("address")
+        .value =
+        address;
+
+
+    resolveAddress();
+
+}
+
+
+/* =========================================================
+   CLEAR SEARCH
+========================================================= */
+
+function clearSearch(){
+
+    document
+        .getElementById("address")
+        .value =
+        "";
+
+
+    document
+        .getElementById("statusMessage")
+        .innerHTML =
+        "";
+
+
+    document
+        .getElementById("results")
+        .style.display =
+        "none";
+
+
+    document
+        .getElementById("address")
+        .focus();
+
+}
+
+
+/* =========================================================
+   COPY NORMALIZED ADDRESS
+========================================================= */
+
+async function copyNormalized(){
+
+    const text =
+        document
+        .getElementById("normalized")
+        .textContent;
+
+
+    if(
+        !text ||
+        text === "-"
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        await navigator
+            .clipboard
+            .writeText(text);
+
+
+        alert(
+            "Normalized address copied!"
+        );
+
+    }
+    catch(error){
+
+        alert(
+            "Unable to copy address."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   DOWNLOAD RESULT
+========================================================= */
+
+function downloadResult(){
+
+    if(!latestResult){
+
+        alert(
+            "Please resolve an address first."
+        );
+
+        return;
+
+    }
+
+
+    const json =
+        JSON.stringify(
+            latestResult,
+            null,
+            2
+        );
+
+
+    const blob =
+        new Blob(
+            [json],
+            {
+                type:
+                    "application/json"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+
+    const link =
+        document.createElement(
+            "a"
+        );
+
+
+    link.href =
+        url;
+
+
+    link.download =
+        "smartgeoai-result.json";
+
+
+    link.click();
+
+
+    URL.revokeObjectURL(
+        url
+    );
+
+}
+
+
+/* =========================================================
+   HISTORY
+========================================================= */
+
+function addHistory(data){
+
+    const parsed =
+        data.parsed_address;
+
+
+    const confidence =
+        data.confidence;
+
+
+    const item = {
+
+        address:
+            data.original_address,
+
+        city:
+            parsed.city ||
+            "Unknown",
+
+        score:
+            confidence.score
+
+    };
+
+
+    searchHistory.unshift(
+        item
+    );
+
+
+    if(
+        searchHistory.length >
+        5
+    ){
+
+        searchHistory.pop();
+
+    }
+
+
+    renderHistory();
+
+}
+
+
+/* =========================================================
+   RENDER HISTORY
+========================================================= */
+
+function renderHistory(){
+
+    const container =
+        document
+        .getElementById(
+            "history"
+        );
+
+
+    if(
+        searchHistory.length === 0
+    ){
+
+        container.innerHTML =
+
+            '<div style="' +
+
+            'color:#667085;' +
+
+            'font-size:13px;' +
+
+            '">' +
+
+            'No searches yet.' +
+
+            '</div>';
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        "";
+
+
+    searchHistory.forEach(
+        function(item){
+
+            const div =
+                document
+                .createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "history-item";
+
+
+            div.innerHTML =
+
+                `<div class="history-address">
+                    📍 ${escapeHtml(item.address)}
+                </div>
+
+                <div class="history-meta">
+                    ${escapeHtml(item.city)}
+                    •
+                    Confidence ${item.score}%
+                </div>`;
+
+
+            div.onclick =
+                function(){
+
+                    document
+                        .getElementById(
+                            "address"
+                        )
+                        .value =
+                        item.address;
+
+
+                    resolveAddress();
+
+                };
+
+
+            container.appendChild(
+                div
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CLEAR HISTORY
+========================================================= */
+
+function clearHistory(){
+
+    searchHistory =
+        [];
+
+
+    renderHistory();
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHtml(text){
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        text;
+
+
+    return div.innerHTML;
+
+}
+
+
+/* =========================================================
+   ENTER KEY SEARCH
+========================================================= */
+
+document
+    .getElementById("address")
+    .addEventListener(
+        "keydown",
+        function(event){
+
+            if(
+                event.ctrlKey &&
+                event.key === "Enter"
+            ){
+
+                resolveAddress();
+
+            }
+
+        }
+    );
+
+</script>
 
 </body>
 
 </html>
+

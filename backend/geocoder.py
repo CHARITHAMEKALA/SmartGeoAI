@@ -2,23 +2,19 @@
 SmartGeoAI
 Geocoding Agent
 
-Uses OpenStreetMap Nominatim API
-to convert address into coordinates.
+Uses OpenStreetMap Nominatim
+to convert Indian addresses
+into coordinates.
 """
 
-
 import requests
-from urllib.parse import quote
+
+
+NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
 
 
 
-NOMINATIM_URL = (
-    "https://nominatim.openstreetmap.org/search"
-)
-
-
-
-def geocode_address(address_data):
+def geocode_address(normalized_address):
 
 
     result = {
@@ -29,36 +25,49 @@ def geocode_address(address_data):
 
         "longitude": None,
 
-        "display_name": None
+        "display_name": None,
+
+        "accuracy": "LOW",
+
+        "source": "OpenStreetMap"
 
     }
-
-
-
-    address = address_data.get(
-        "formatted_address",
-        ""
-    )
-
-
-    if not address:
-
-        return result
-
 
 
     try:
 
 
-        params = {
+        city = normalized_address.get(
+            "city",
+            ""
+        )
 
-            "q": address,
 
-            "format": "json",
+        state = normalized_address.get(
+            "state",
+            ""
+        )
 
-            "limit": 1
 
-        }
+        pincode = normalized_address.get(
+            "pincode",
+            ""
+        )
+
+
+        landmark = normalized_address.get(
+            "landmark",
+            ""
+        )
+
+
+
+        query = (
+            f"{landmark}, "
+            f"{city}, "
+            f"{state}, "
+            f"{pincode}, India"
+        )
 
 
 
@@ -66,6 +75,20 @@ def geocode_address(address_data):
 
             "User-Agent":
             "SmartGeoAI-Hackathon"
+
+        }
+
+
+
+        params = {
+
+            "q": query,
+
+            "format": "json",
+
+            "limit": 1,
+
+            "addressdetails": 1
 
         }
 
@@ -79,7 +102,7 @@ def geocode_address(address_data):
 
             headers=headers,
 
-            timeout=5
+            timeout=10
 
         )
 
@@ -92,6 +115,7 @@ def geocode_address(address_data):
         if data:
 
 
+
             location = data[0]
 
 
@@ -99,24 +123,85 @@ def geocode_address(address_data):
 
 
             result["latitude"] = float(
-
                 location["lat"]
-
             )
 
 
             result["longitude"] = float(
-
                 location["lon"]
-
             )
 
 
             result["display_name"] = (
-
                 location["display_name"]
+            )
+
+
+            result["accuracy"] = "HIGH"
+
+
+
+        else:
+
+
+            # fallback search using only city+pincode
+
+
+            fallback = (
+
+                f"{city}, "
+                f"{state}, "
+                f"{pincode}, India"
 
             )
+
+
+            params["q"] = fallback
+
+
+
+            response = requests.get(
+
+                NOMINATIM_URL,
+
+                params=params,
+
+                headers=headers,
+
+                timeout=10
+
+            )
+
+
+            data = response.json()
+
+
+
+            if data:
+
+
+                location = data[0]
+
+
+                result["found"] = True
+
+
+                result["latitude"] = float(
+                    location["lat"]
+                )
+
+
+                result["longitude"] = float(
+                    location["lon"]
+                )
+
+
+                result["display_name"] = (
+                    location["display_name"]
+                )
+
+
+                result["accuracy"] = "MEDIUM"
 
 
 

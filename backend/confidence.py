@@ -1,270 +1,110 @@
-"""
-SmartGeoAI
-Confidence Engine
-
-Evaluates address resolution reliability.
-"""
-
-
 def calculate_confidence(
-
-        pincode_result,
-
-        landmark_result,
-
-        address_data,
-
-        location_result=None
-
+    parsed_address,
+    pincode_validation,
+    location,
+    landmark_evidence
 ):
 
-
     score = 0
-
     evidence = []
 
 
-
-    # -----------------------------
-    # Pincode Validation
-    # -----------------------------
-
-    if pincode_result.get("valid"):
-
+    # Pincode check
+    if pincode_validation.get("valid"):
 
         score += 30
 
-
         evidence.append(
-
             "✓ Pincode matched with database"
-
         )
-
 
     else:
 
-
         evidence.append(
-
             "✗ Pincode verification failed"
-
         )
 
 
-
-
-
-    # -----------------------------
-    # Geocoding Check
-    # -----------------------------
-
-    if location_result and location_result.get("found"):
-
+    # Location check
+    if location.get("found"):
 
         score += 30
 
-
         evidence.append(
-
-            "✓ Address converted to coordinates"
-
+            "✓ Coordinates available"
         )
-
 
     else:
 
-
         evidence.append(
-
             "✗ Unable to find exact coordinates"
-
         )
 
 
+    # Landmark check
+    if landmark_evidence.get("found"):
 
-
-
-    # -----------------------------
-    # Landmark Evidence
-    # -----------------------------
-
-    if landmark_result.get("found"):
-
-
-        score += 25
-
+        score += 20
 
         evidence.append(
-
-            "✓ Real landmark evidence found from OpenStreetMap"
-
+            "✓ Landmark verified"
         )
-
 
     else:
 
-
         evidence.append(
-
             "✗ Landmark evidence unavailable"
-
         )
 
 
+    # Address completeness
+    if (
+        parsed_address.get("city")
+        and
+        parsed_address.get("pincode")
+    ):
 
-
-
-    # -----------------------------
-    # Address Completeness
-    # -----------------------------
-
-    fields = [
-
-        "landmark",
-
-        "city",
-
-        "state",
-
-        "pincode"
-
-    ]
-
-
-
-    completed = 0
-
-
-
-    for field in fields:
-
-
-        if address_data.get(field):
-
-            completed += 1
-
-
-
-
-
-    completeness = (
-
-        completed / len(fields)
-
-    ) * 100
-
-
-
-
-
-    if completeness >= 75:
-
-
-        score += 15
-
+        score += 20
 
         evidence.append(
-
             "✓ Address information complete"
-
         )
-
 
     else:
 
-
         evidence.append(
-
             "✗ Address information incomplete"
-
         )
 
 
-
-
-
-    # Limit score
-
-    score = min(
-
-        round(score),
-
-        100
-
-    )
-
-
-
-
-
-    # Confidence category
-
-
-    if score >= 85:
-
+    if score >= 80:
 
         level = "HIGH"
 
+        decision = "Auto-confirm"
 
-        decision = (
-
-            "Safe to deliver"
-
-        )
-
-
-
-    elif score >= 60:
-
+    elif score >= 50:
 
         level = "MEDIUM"
 
-
-        decision = (
-
-            "Needs verification"
-
-        )
-
-
+        decision = "Needs verification"
 
     else:
 
-
         level = "LOW"
 
-
-        decision = (
-
-            "Do not auto-confirm"
-
-        )
-
-
+        decision = "Do not auto-confirm"
 
 
 
     return {
 
+        "score": score,
 
-        "score":
+        "level": level,
 
-        score,
+        "decision": decision,
 
-
-        "level":
-
-        level,
-
-
-        "decision":
-
-        decision,
-
-
-        "evidence":
-
-        evidence
+        "evidence": evidence
 
     }

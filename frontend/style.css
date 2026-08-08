@@ -1,222 +1,258 @@
-/*
-SmartGeoAI
-AI Address Intelligence Dashboard
-*/
-
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
 body {
-
-    margin:0;
-
-    padding:0;
-
-    font-family:
-    "Segoe UI",
-    Arial,
-    sans-serif;
-
-    background:#f5f7fb;
-
-    color:#222;
-
+    font-family: Arial, sans-serif;
+    background: #eef3f8;
+    color: #1f2937;
+    min-height: 100vh;
 }
-
-
 
 .container {
-
-
-    width:90%;
-
-    max-width:1100px;
-
-    margin:auto;
-
-    padding:30px;
-
+    width: 90%;
+    max-width: 1100px;
+    margin: 35px auto;
 }
 
-
-
-h1 {
-
-
-    text-align:center;
-
-    color:#1565c0;
-
-    font-size:40px;
-
+.container h1 {
+    text-align: center;
+    font-size: 38px;
+    margin-bottom: 8px;
+    color: #123b63;
 }
-
-
 
 .container > p {
-
-
-    text-align:center;
-
-    font-size:18px;
-
-    color:#555;
-
+    text-align: center;
+    color: #64748b;
+    margin-bottom: 30px;
+    font-size: 17px;
 }
 
+/* Address input */
 
-
-/* Address Box */
-
-
-textarea {
-
-
-    width:100%;
-
-    height:120px;
-
-    padding:15px;
-
-    font-size:16px;
-
-    border-radius:12px;
-
-    border:1px solid #ccc;
-
-    margin-top:25px;
-
+#address {
+    display: block;
+    width: 100%;
+    min-height: 110px;
+    padding: 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    background: white;
+    font-size: 16px;
+    resize: vertical;
+    outline: none;
 }
 
+#address:focus {
+    border-color: #2563eb;
+}
 
-
-
+/* Button */
 
 button {
-
-
-    display:block;
-
-    margin:20px auto;
-
-    padding:14px 35px;
-
-    border:none;
-
-    border-radius:25px;
-
-    background:#1565c0;
-
-    color:white;
-
-    font-size:17px;
-
-    cursor:pointer;
-
+    display: block;
+    margin: 15px auto 25px;
+    padding: 13px 30px;
+    border: none;
+    border-radius: 10px;
+    background: #2563eb;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
 }
-
-
 
 button:hover {
-
-
-    background:#0d47a1;
-
+    background: #1d4ed8;
 }
 
+/* Result */
 
-
-
-
-/* Result Card */
-
-
-.result {
-
-
-    background:white;
-
-    margin-top:30px;
-
-    padding:25px;
-
-    border-radius:15px;
-
-    box-shadow:
-
-    0 5px 20px
-
-    rgba(0,0,0,0.1);
-
+#result {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
 }
 
-
-
-
-.card {
-
-
-    line-height:1.6;
-
+#result h2 {
+    color: #123b63;
+    margin-bottom: 8px;
 }
 
-
-
-
-.card h3 {
-
-
-    color:#1565c0;
-
-    margin-bottom:5px;
-
+#result p {
+    margin: 12px 0;
+    line-height: 1.5;
 }
 
+/* Result header */
 
-
-.card h2 {
-
-
-    color:#2e7d32;
-
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
 }
 
-
-
-
-
-.card p {
-
-
-    background:#f1f5f9;
-
-    padding:8px;
-
-    border-radius:8px;
-
+.small-text {
+    color: #64748b;
+    font-size: 14px;
 }
 
+/* Confidence */
 
+.confidence {
+    min-width: 110px;
+    padding: 12px;
+    border-radius: 12px;
+    text-align: center;
+}
 
+.confidence span {
+    display: block;
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1.2;
+}
 
+.confidence small {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.confidence.high {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.confidence.medium {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.confidence.low {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* Information cards */
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.info-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 16px;
+    border-radius: 10px;
+}
+
+.info-card span {
+    display: block;
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 7px;
+}
+
+.info-card strong {
+    display: block;
+    color: #1e293b;
+    line-height: 1.4;
+}
+
+/* Verification decision */
+
+.decision-card {
+    margin-top: 20px;
+    padding: 18px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+}
+
+.decision-card h3 {
+    margin-bottom: 8px;
+    color: #1e3a8a;
+}
+
+.decision-card p {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1d4ed8;
+}
+
+/* Verification details */
+
+.verification {
+    margin-top: 22px;
+    padding: 18px;
+    background: #f8fafc;
+    border-radius: 10px;
+}
+
+.verification h3 {
+    margin-bottom: 12px;
+    color: #123b63;
+}
+
+.verification p {
+    margin: 8px 0 !important;
+}
+
+/* Error */
+
+.error {
+    padding: 20px;
+    background: #fee2e2;
+    color: #b91c1c;
+    border-radius: 10px;
+    font-weight: bold;
+}
 
 /* Map */
 
-
 #map {
+    height: 430px;
+    width: 100%;
+    margin-top: 25px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
 
+/* Mobile */
 
-    height:500px;
+@media (max-width: 700px) {
 
-    width:100%;
+    .container {
+        width: 94%;
+        margin: 20px auto;
+    }
 
-    margin-top:25px;
+    .container h1 {
+        font-size: 30px;
+    }
 
-    border-radius:15px;
+    .result-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
 
-    box-shadow:
-
-    0 5px 20px
-
-    rgba(0,0,0,0.15);
-
+    #map {
+        height: 350px;
+    }
 }
