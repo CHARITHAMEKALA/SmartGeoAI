@@ -4,2234 +4,1337 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SmartGeoAI | Intelligent Address Intelligence</title>
+<title>SmartGeoAI</title>
 
 <style>
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
-:root {
-    --primary: #2563eb;
-    --primary-dark: #1746b0;
-    --secondary: #0f172a;
-    --text: #172033;
-    --muted: #667085;
-    --border: #e4eaf2;
-    --bg: #f4f7fb;
-    --card: #ffffff;
-    --success: #16834d;
-    --success-bg: #ecfdf3;
-    --warning: #b54708;
-    --warning-bg: #fff7ed;
-    --danger: #d92d20;
-}
-
-body {
-    font-family: Inter, Arial, Helvetica, sans-serif;
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    min-height:100vh;
     background:
-        radial-gradient(circle at top left, #eaf1ff 0, transparent 35%),
-        radial-gradient(circle at top right, #eefdf5 0, transparent 30%),
-        var(--bg);
-    color: var(--text);
-    min-height: 100vh;
+        radial-gradient(circle at top left,#dbeafe,transparent 35%),
+        radial-gradient(circle at top right,#dcfce7,transparent 30%),
+        #f4f7fb;
+    color:#172033;
 }
 
-/* ================= HEADER ================= */
+/* HEADER */
 
-header {
-    background:
-        linear-gradient(135deg, #0b2d72, #2563eb 55%, #3b82f6);
-    color: white;
-    padding: 22px 6%;
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.18);
+header{
+    background:linear-gradient(135deg,#081b4b,#2563eb,#3b82f6);
+    color:white;
+    padding:24px 6%;
+    box-shadow:0 10px 30px rgba(0,0,0,.18);
 }
 
-.header-inner {
-    max-width: 1250px;
-    margin: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
+.header-inner{
+    max-width:1250px;
+    margin:auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 }
 
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 14px;
+.brand{
+    display:flex;
+    align-items:center;
+    gap:15px;
 }
 
-.logo {
-    width: 58px;
-    height: 58px;
-    border-radius: 17px;
-    background: rgba(255,255,255,0.18);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 31px;
-    border: 1px solid rgba(255,255,255,0.25);
+.logo{
+    width:60px;
+    height:60px;
+    border-radius:17px;
+    background:rgba(255,255,255,.18);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:32px;
 }
 
-.brand h1 {
-    font-size: 28px;
-    letter-spacing: -0.5px;
+.brand h1{
+    font-size:30px;
 }
 
-.brand p {
-    margin-top: 4px;
-    opacity: 0.88;
-    font-size: 14px;
+.brand p{
+    margin-top:5px;
+    font-size:14px;
+    opacity:.9;
 }
 
-.online-badge {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 14px;
-    border-radius: 30px;
-    background: rgba(255,255,255,0.13);
-    border: 1px solid rgba(255,255,255,0.2);
-    font-size: 13px;
+.online{
+    background:rgba(255,255,255,.15);
+    padding:10px 16px;
+    border-radius:25px;
 }
 
-.online-dot {
-    width: 9px;
-    height: 9px;
-    background: #55ef9a;
-    border-radius: 50%;
-    box-shadow: 0 0 10px #55ef9a;
-}
-
-/* ================= MAIN ================= */
-
-.container {
-    width: 92%;
-    max-width: 1250px;
-    margin: 32px auto 50px;
-}
-
-/* ================= HERO ================= */
-
-.hero {
-    text-align: center;
-    margin: 25px 0 28px;
-}
-
-.hero h2 {
-    font-size: 34px;
-    color: #102a63;
-    letter-spacing: -1px;
-}
-
-.hero p {
-    margin-top: 9px;
-    color: var(--muted);
-    font-size: 16px;
-}
-
-/* ================= SEARCH ================= */
-
-.search-card {
-    background: rgba(255,255,255,0.96);
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 30px;
-    box-shadow: 0 18px 45px rgba(15,23,42,0.09);
-}
-
-.search-heading {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
-}
-
-.search-heading-icon {
-    width: 43px;
-    height: 43px;
-    border-radius: 13px;
-    background: #eaf1ff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 21px;
-}
-
-.search-card h3 {
-    font-size: 21px;
-}
-
-.search-card > p {
-    color: var(--muted);
-    margin: 7px 0 20px 55px;
-}
-
-.search-row {
-    display: flex;
-    gap: 12px;
-}
-
-.input-wrapper {
-    position: relative;
-    flex: 1;
-}
-
-#addressInput {
-    width: 100%;
-    height: 55px;
-    padding: 0 18px;
-    border: 1px solid #d4dce8;
-    border-radius: 14px;
-    font-size: 16px;
-    color: var(--text);
-    outline: none;
-    background: #fff;
-    transition: 0.2s;
-}
-
-#addressInput:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
-}
-
-#searchButton {
-    height: 55px;
-    min-width: 180px;
-    padding: 0 24px;
-    border: 0;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #2563eb, #174fc5);
-    color: white;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 8px 18px rgba(37,99,235,0.25);
-    transition: 0.2s;
-}
-
-#searchButton:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 12px 23px rgba(37,99,235,0.3);
-}
-
-#searchButton:disabled {
-    opacity: 0.7;
-    cursor: wait;
-    transform: none;
-}
-
-#status {
-    margin-top: 15px;
-    min-height: 22px;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-/* ================= QUICK EXAMPLES ================= */
-
-.quick-searches {
-    margin-top: 18px;
-}
+/* MAIN */
 
-.quick-label {
-    color: var(--muted);
-    font-size: 13px;
-    margin-bottom: 9px;
+.container{
+    width:92%;
+    max-width:1250px;
+    margin:35px auto;
 }
 
-.quick-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+.hero{
+    text-align:center;
+    margin-bottom:30px;
 }
 
-.quick-btn {
-    border: 1px solid #dce3ee;
-    background: #f8fafc;
-    color: #344054;
-    padding: 8px 12px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 13px;
+.hero h2{
+    font-size:36px;
+    color:#102a63;
 }
 
-.quick-btn:hover {
-    background: #eaf1ff;
-    border-color: #bfd2ff;
-    color: #174fc5;
+.hero p{
+    margin-top:10px;
+    color:#667085;
 }
 
-/* ================= STATS ================= */
+/* SEARCH */
 
-.stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-    margin: 22px 0;
+.search-card{
+    background:white;
+    padding:30px;
+    border-radius:24px;
+    box-shadow:0 18px 45px rgba(15,23,42,.1);
 }
 
-.stat-card {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 20px;
-    box-shadow: 0 8px 25px rgba(15,23,42,0.05);
+.search-card h3{
+    font-size:22px;
 }
 
-.stat-icon {
-    font-size: 22px;
+.search-card p{
+    color:#667085;
+    margin:10px 0 20px;
 }
 
-.stat-value {
-    margin-top: 9px;
-    font-size: 23px;
-    font-weight: 800;
-    color: #102a63;
+.search-row{
+    display:flex;
+    gap:12px;
 }
 
-.stat-label {
-    color: var(--muted);
-    font-size: 13px;
-    margin-top: 3px;
+#addressInput{
+    flex:1;
+    height:55px;
+    padding:0 18px;
+    border:1px solid #d4dce8;
+    border-radius:14px;
+    font-size:16px;
+    outline:none;
 }
 
-/* ================= RESULTS ================= */
-
-#results {
-    display: none;
+#addressInput:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 4px rgba(37,99,235,.1);
 }
 
-.section {
-    background: rgba(255,255,255,0.97);
-    border: 1px solid var(--border);
-    border-radius: 22px;
-    padding: 27px;
-    margin-top: 20px;
-    box-shadow: 0 12px 32px rgba(15,23,42,0.06);
+#searchButton{
+    height:55px;
+    padding:0 25px;
+    border:none;
+    border-radius:14px;
+    background:linear-gradient(135deg,#2563eb,#174fc5);
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 21px;
+#searchButton:hover{
+    transform:translateY(-1px);
 }
 
-.section-title {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    font-size: 20px;
-    font-weight: 800;
+#status{
+    margin-top:15px;
+    min-height:22px;
+    font-weight:bold;
 }
 
-.section-subtitle {
-    color: var(--muted);
-    font-size: 13px;
+.examples{
+    margin-top:18px;
+    color:#667085;
 }
-
-/* ================= SUCCESS ================= */
 
-.success-banner {
-    margin-top: 20px;
-    padding: 17px 20px;
-    border-radius: 16px;
-    background: var(--success-bg);
-    border: 1px solid #b8e8ca;
-    color: var(--success);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
+.example{
+    display:inline-block;
+    margin:7px 5px;
+    padding:8px 13px;
+    background:#f0f5ff;
+    border:1px solid #d6e2ff;
+    border-radius:20px;
+    color:#174fc5;
+    cursor:pointer;
+    font-size:13px;
 }
 
-.success-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 700;
-}
+/* STATS */
 
-.success-icon {
-    width: 31px;
-    height: 31px;
-    border-radius: 50%;
-    background: #d9f8e5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin:22px 0;
 }
-
-/* ================= RESULT GRID ================= */
 
-.result-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 13px;
+.stat{
+    background:white;
+    border:1px solid #e4eaf2;
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 8px 25px rgba(15,23,42,.05);
 }
 
-.result-box {
-    background: #f8fafc;
-    border: 1px solid #e5eaf1;
-    border-radius: 15px;
-    padding: 17px;
-    min-height: 92px;
+.stat-icon{
+    font-size:24px;
 }
 
-.result-label {
-    color: #667085;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    margin-bottom: 8px;
+.stat-number{
+    margin-top:8px;
+    font-size:23px;
+    font-weight:bold;
+    color:#102a63;
 }
 
-.result-value {
-    font-size: 16px;
-    font-weight: 750;
-    word-break: break-word;
+.stat-label{
+    margin-top:4px;
+    color:#667085;
+    font-size:13px;
 }
 
-/* ================= CONFIDENCE ================= */
+/* RESULTS */
 
-.confidence-layout {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: 25px;
+#results{
+    display:none;
 }
 
-.score-panel {
-    border-radius: 20px;
-    padding: 24px;
-    text-align: center;
-    background: linear-gradient(145deg, #ecfdf3, #f8fffb);
-    border: 1px solid #b9e9cb;
+.section{
+    background:white;
+    border-radius:22px;
+    padding:27px;
+    margin-top:20px;
+    box-shadow:0 12px 32px rgba(15,23,42,.06);
 }
 
-.score-circle {
-    width: 125px;
-    height: 125px;
-    border-radius: 50%;
-    margin: 0 auto 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: white;
-    border: 10px solid #72d49b;
-    box-shadow: 0 8px 20px rgba(22,131,77,0.1);
+.title{
+    font-size:21px;
+    font-weight:bold;
+    margin-bottom:20px;
 }
 
-.score-number {
-    font-size: 30px;
-    font-weight: 900;
-    color: var(--success);
+.success{
+    background:#ecfdf3;
+    color:#16834d;
+    border:1px solid #b8e8ca;
+    border-radius:16px;
+    padding:17px;
+    margin-top:20px;
+    font-weight:bold;
 }
 
-.level-badge {
-    display: inline-block;
-    padding: 7px 16px;
-    border-radius: 30px;
-    background: #dff8e8;
-    color: var(--success);
-    font-size: 13px;
-    font-weight: 800;
+.grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:13px;
 }
 
-.decision {
-    margin-top: 12px;
-    font-size: 14px;
-    font-weight: 700;
-    color: #344054;
+.result-box{
+    background:#f8fafc;
+    border:1px solid #e5eaf1;
+    border-radius:15px;
+    padding:17px;
+    min-height:90px;
 }
 
-.evidence-panel {
-    padding: 5px 0;
+.result-label{
+    color:#667085;
+    font-size:12px;
+    text-transform:uppercase;
+    margin-bottom:8px;
 }
 
-.evidence-panel h4 {
-    font-size: 17px;
-    margin-bottom: 15px;
+.result-value{
+    font-size:16px;
+    font-weight:bold;
+    word-break:break-word;
 }
 
-.evidence-list {
-    list-style: none;
-}
+/* CONFIDENCE */
 
-.evidence-list li {
-    padding: 11px 14px;
-    margin-bottom: 8px;
-    background: #f8fafc;
-    border-radius: 10px;
-    border: 1px solid #e7ebf1;
-    font-size: 14px;
+.confidence{
+    display:grid;
+    grid-template-columns:220px 1fr;
+    gap:25px;
 }
-
-/* ================= NORMALIZED ADDRESS ================= */
 
-.normalized-box {
-    background:
-        linear-gradient(135deg, #f5f8ff, #f8fbff);
-    border: 1px solid #dce6fa;
-    border-radius: 16px;
-    padding: 21px;
+.score{
+    text-align:center;
+    padding:25px;
+    background:#ecfdf3;
+    border-radius:20px;
 }
 
-.normalized-label {
-    color: var(--muted);
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: .5px;
+.circle{
+    width:125px;
+    height:125px;
+    border-radius:50%;
+    margin:auto auto 15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:white;
+    border:10px solid #72d49b;
 }
 
-.normalized-value {
-    margin-top: 9px;
-    font-size: 19px;
-    font-weight: 750;
-    color: #173a87;
+.score-number{
+    font-size:30px;
+    font-weight:bold;
+    color:#16834d;
 }
 
-/* ================= MAP ================= */
-
-.map-wrapper {
-    overflow: hidden;
-    border: 1px solid #dfe5ef;
-    border-radius: 18px;
-    background: white;
+.badge{
+    display:inline-block;
+    padding:7px 16px;
+    border-radius:20px;
+    background:#dff8e8;
+    color:#16834d;
+    font-weight:bold;
 }
 
-.map-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-    padding: 15px 17px;
-    background: #f8fafc;
-    border-bottom: 1px solid #e7ebf1;
-    flex-wrap: wrap;
+.decision{
+    margin-top:12px;
+    font-weight:bold;
 }
 
-.coordinates {
-    font-weight: 750;
-    color: #172033;
+.evidence{
+    list-style:none;
 }
 
-.map-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    text-decoration: none;
-    background: #2563eb;
-    color: white;
-    padding: 9px 14px;
-    border-radius: 9px;
-    font-size: 13px;
-    font-weight: 700;
+.evidence li{
+    padding:12px;
+    margin-bottom:8px;
+    background:#f8fafc;
+    border-radius:10px;
+    border:1px solid #e7ebf1;
 }
 
-.map-link:hover {
-    background: #174fc5;
-}
+/* NORMALIZED */
 
-#mapFrame {
-    width: 100%;
-    height: 430px;
-    border: 0;
-    display: block;
+.normalized{
+    background:#f5f8ff;
+    border:1px solid #dce6fa;
+    border-radius:16px;
+    padding:20px;
+    font-size:19px;
+    font-weight:bold;
+    color:#173a87;
 }
 
-/* ================= PINCODE ================= */
+/* PINCODE */
 
-.pincode-valid {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 16px;
-    background: #ecfdf3;
-    border: 1px solid #b8e8ca;
-    color: var(--success);
-    border-radius: 13px;
-    font-weight: 700;
+.valid{
+    padding:16px;
+    background:#ecfdf3;
+    color:#16834d;
+    border:1px solid #b8e8ca;
+    border-radius:13px;
+    font-weight:bold;
 }
 
-.pincode-invalid {
-    padding: 16px;
-    background: #fff1f0;
-    border: 1px solid #f2b8b5;
-    color: var(--danger);
-    border-radius: 13px;
-    font-weight: 700;
+.invalid{
+    padding:16px;
+    background:#fff1f0;
+    color:#d92d20;
+    border:1px solid #f2b8b5;
+    border-radius:13px;
 }
 
-/* ================= HISTORY ================= */
+/* MAP */
 
-.history-list {
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
+.map-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px;
+    background:#f8fafc;
 }
 
-.history-item {
-    border: 1px solid #e5eaf1;
-    border-radius: 13px;
-    padding: 13px 15px;
-    background: #fafbfd;
-    cursor: pointer;
-    transition: .2s;
+.map-link{
+    background:#2563eb;
+    color:white;
+    padding:9px 14px;
+    border-radius:9px;
+    text-decoration:none;
 }
 
-.history-item:hover {
-    background: #f0f5ff;
-    border-color: #cbd9f7;
+#map{
+    width:100%;
+    height:430px;
+    border:0;
 }
 
-.history-address {
-    font-weight: 700;
-    font-size: 14px;
-}
+/* HISTORY */
 
-.history-meta {
-    margin-top: 5px;
-    color: var(--muted);
-    font-size: 12px;
+.history-item{
+    padding:14px;
+    margin-bottom:9px;
+    background:#fafbfd;
+    border:1px solid #e5eaf1;
+    border-radius:13px;
 }
 
-/* ================= FOOTER ================= */
-
-footer {
-    text-align: center;
-    padding: 35px 20px;
-    color: var(--muted);
-    font-size: 13px;
+.history-address{
+    font-weight:bold;
 }
 
-.footer-brand {
-    font-weight: 800;
-    color: #173a87;
+.history-meta{
+    color:#667085;
+    font-size:12px;
+    margin-top:5px;
 }
-
-/* ================= LOADING ================= */
 
-.loading-dot {
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    margin-left: 4px;
-    border-radius: 50%;
-    background: currentColor;
-    animation: pulse 1s infinite;
-}
+/* FOOTER */
 
-@keyframes pulse {
-    0%, 100% {
-        opacity: .25;
-    }
-    50% {
-        opacity: 1;
-    }
+footer{
+    text-align:center;
+    padding:35px;
+    color:#667085;
 }
-
-/* ================= MOBILE ================= */
 
-@media(max-width: 950px) {
+@media(max-width:900px){
 
-    .stats {
-        grid-template-columns: repeat(2, 1fr);
+    .stats{
+        grid-template-columns:repeat(2,1fr);
     }
 
-    .result-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .grid{
+        grid-template-columns:repeat(2,1fr);
     }
 
-    .confidence-layout {
-        grid-template-columns: 1fr;
-    }
 }
 
-@media(max-width: 700px) {
+@media(max-width:650px){
 
-    header {
-        padding: 18px 5%;
+    .header-inner{
+        align-items:flex-start;
     }
 
-    .header-inner {
-        align-items: flex-start;
+    .online{
+        display:none;
     }
 
-    .online-badge {
-        display: none;
+    .search-row{
+        flex-direction:column;
     }
 
-    .brand h1 {
-        font-size: 23px;
+    #searchButton{
+        width:100%;
     }
 
-    .brand p {
-        font-size: 12px;
+    .stats{
+        grid-template-columns:1fr;
     }
 
-    .logo {
-        width: 48px;
-        height: 48px;
-        font-size: 25px;
+    .grid{
+        grid-template-columns:1fr;
     }
 
-    .hero h2 {
-        font-size: 27px;
+    .confidence{
+        grid-template-columns:1fr;
     }
 
-    .container {
-        width: 94%;
-        margin-top: 20px;
+    .hero h2{
+        font-size:28px;
     }
 
-    .search-card,
-    .section {
-        padding: 20px;
-    }
-
-    .search-card > p {
-        margin-left: 0;
-    }
-
-    .search-row {
-        flex-direction: column;
-    }
-
-    #searchButton {
-        width: 100%;
-    }
-
-    .stats {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .result-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .map-toolbar {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    #mapFrame {
-        height: 340px;
-    }
 }
 
-@media(max-width: 450px) {
-
-    .stats {
-        grid-template-columns: 1fr;
-    }
-
-    .hero {
-        text-align: left;
-    }
-}
 </style>
 </head>
 
 <body>
 
-<!-- =========================================================
-     HEADER
-========================================================= -->
-
 <header>
 
-    <div class="header-inner">
+<div class="header-inner">
 
-        <div class="brand">
+<div class="brand">
 
-            <div class="logo">
-                🌍
-            </div>
+<div class="logo">🌍</div>
 
-            <div>
-                <h1>SmartGeoAI</h1>
+<div>
+<h1>SmartGeoAI</h1>
 
-                <p>
-                    Intelligent Address Resolution & Geospatial Intelligence
-                </p>
-            </div>
+<p>
+Intelligent Address Resolution & Geospatial Intelligence
+</p>
 
-        </div>
+</div>
 
-        <div class="online-badge">
+</div>
 
-            <span class="online-dot"></span>
+<div class="online">
+🟢 SmartGeoAI Online
+</div>
 
-            Backend Connected
-
-        </div>
-
-    </div>
+</div>
 
 </header>
 
 
-<!-- =========================================================
-     MAIN
-========================================================= -->
-
 <main class="container">
 
+<div class="hero">
 
-    <div class="hero">
+<h2>Turn Any Address Into Intelligence</h2>
 
-        <h2>
-            Turn Any Address Into Intelligence
-        </h2>
+<p>
+Resolve landmarks, cities, pincodes, districts and coordinates
+with AI-powered geospatial validation.
+</p>
 
-        <p>
-            Resolve landmarks, cities, pincodes, districts and coordinates
-            with AI-powered geospatial validation.
-        </p>
+</div>
 
-    </div>
 
+<div class="search-card">
 
-    <!-- =====================================================
-         SEARCH
-    ====================================================== -->
+<h3>🔎 Address Intelligence Search</h3>
 
-    <div class="search-card">
+<p>
+Enter an address, landmark, city or pincode.
+</p>
 
-        <div class="search-heading">
+<div class="search-row">
 
-            <div class="search-heading-icon">
-                🔎
-            </div>
+<input
+id="addressInput"
+type="text"
+placeholder="Enter address..."
+>
 
-            <h3>
-                Search & Resolve Address
-            </h3>
+<button id="searchButton">
+🔍 Search Address
+</button>
 
-        </div>
+</div>
 
-        <p>
-            Enter a complete address, landmark or pincode.
-        </p>
+<div id="status"></div>
 
+<div class="examples">
 
-        <div class="search-row">
+Try an example:
 
-            <div class="input-wrapper">
+<span
+class="example"
+onclick="useExample('Near Railway Station, Vijayawada, 520010')"
+>
+Vijayawada Railway Station
+</span>
 
-                <input
-                    id="addressInput"
-                    type="text"
-                    autocomplete="off"
-                    placeholder="Enter address..."
-                >
+<span
+class="example"
+onclick="useExample('Vijayawada, 520010')"
+>
+Vijayawada 520010
+</span>
 
-            </div>
+<span
+class="example"
+onclick="useExample('Guntur, 522001')"
+>
+Guntur 522001
+</span>
 
+</div>
 
-            <button id="searchButton">
+</div>
 
-                🔍 Search Address
 
-            </button>
+<div class="stats">
 
-        </div>
+<div class="stat">
+<div class="stat-icon">🗃️</div>
+<div class="stat-number" id="rows">165,627</div>
+<div class="stat-label">Database Records</div>
+</div>
 
+<div class="stat">
+<div class="stat-icon">📮</div>
+<div class="stat-number">Pincode</div>
+<div class="stat-label">Validation Engine</div>
+</div>
 
-        <div id="status"></div>
+<div class="stat">
+<div class="stat-icon">🧠</div>
+<div class="stat-number">AI</div>
+<div class="stat-label">Confidence Analysis</div>
+</div>
 
+<div class="stat">
+<div class="stat-icon">🗺️</div>
+<div class="stat-number">Live Map</div>
+<div class="stat-label">Location Visualization</div>
+</div>
 
-        <div class="quick-searches">
+</div>
 
-            <div class="quick-label">
-                Try an example:
-            </div>
 
-            <div class="quick-buttons">
+<div id="results">
 
-                <button
-                    class="quick-btn"
-                    onclick="useExample('Near Railway Station, Vijayawada, 520010')"
-                >
-                    Railway Station, Vijayawada
-                </button>
+<div class="success">
+✓ Address resolved successfully
+<span id="decision"></span>
+</div>
 
-                <button
-                    class="quick-btn"
-                    onclick="useExample('Vijayawada, 520010')"
-                >
-                    Vijayawada 520010
-                </button>
 
-                <button
-                    class="quick-btn"
-                    onclick="useExample('Guntur, 522001')"
-                >
-                    Guntur 522001
-                </button>
+<div class="section">
 
-            </div>
+<div class="title">
+📍 Address Intelligence
+</div>
 
-        </div>
+<div id="resultGrid" class="grid"></div>
 
-    </div>
+</div>
 
 
-    <!-- =====================================================
-         SYSTEM STATS
-    ====================================================== -->
+<div class="section">
 
-    <div class="stats">
+<div class="title">
+🧠 AI Confidence Analysis
+</div>
 
-        <div class="stat-card">
+<div class="confidence">
 
-            <div class="stat-icon">
-                🗃️
-            </div>
+<div class="score">
 
-            <div
-                id="databaseRows"
-                class="stat-value"
-            >
-                165,627
-            </div>
+<div class="circle">
 
-            <div class="stat-label">
-                Database Records
-            </div>
+<span id="score" class="score-number">
+0%
+</span>
 
-        </div>
+</div>
 
+<div id="level" class="badge">
+-
+</div>
 
-        <div class="stat-card">
+<div id="confidenceDecision" class="decision">
+-
+</div>
 
-            <div class="stat-icon">
-                📍
-            </div>
+</div>
 
-            <div class="stat-value">
-                Pincode
-            </div>
+<div>
 
-            <div class="stat-label">
-                Location Validation
-            </div>
+<h3>Verification Evidence</h3>
 
-        </div>
+<ul id="evidence" class="evidence"></ul>
 
+</div>
 
-        <div class="stat-card">
+</div>
 
-            <div class="stat-icon">
-                🧠
-            </div>
+</div>
 
-            <div class="stat-value">
-                AI
-            </div>
 
-            <div class="stat-label">
-                Confidence Analysis
-            </div>
+<div class="section">
 
-        </div>
+<div class="title">
+✨ Normalized Address
+</div>
 
+<div id="normalized" class="normalized">
+-
+</div>
 
-        <div class="stat-card">
+</div>
 
-            <div class="stat-icon">
-                🗺️
-            </div>
 
-            <div class="stat-value">
-                Live Map
-            </div>
+<div class="section">
 
-            <div class="stat-label">
-                Coordinate Visualization
-            </div>
+<div class="title">
+📮 Pincode Validation
+</div>
 
-        </div>
+<div id="pincode"></div>
 
-    </div>
+</div>
 
 
-    <!-- =====================================================
-         RESULTS
-    ====================================================== -->
+<div class="section">
 
-    <div id="results">
+<div class="title">
+🗺️ Interactive Location Map
+</div>
 
+<div class="map-top">
 
-        <!-- SUCCESS -->
+<div>
+📍 Coordinates:
+<strong id="coordinates">-</strong>
+</div>
 
-        <div class="success-banner">
+<a
+id="mapLink"
+class="map-link"
+target="_blank"
+>
+🌍 Open Full Map
+</a>
 
-            <div class="success-left">
+</div>
 
-                <div class="success-icon">
-                    ✓
-                </div>
+<iframe
+id="map"
+title="SmartGeoAI Map"
+loading="lazy"
+></iframe>
 
-                <span>
-                    Address resolved successfully
-                </span>
+</div>
 
-            </div>
 
-            <span id="resultDecision">
-                Auto-confirm
-            </span>
+<div class="section">
 
-        </div>
+<div class="title">
+🕘 Recent Searches
+</div>
 
+<div id="history">
+No searches yet.
+</div>
 
-        <!-- =================================================
-             ADDRESS RESULTS
-        ================================================== -->
+</div>
 
-        <section class="section">
-
-            <div class="section-header">
-
-                <div>
-
-                    <div class="section-title">
-                        📍 Address Intelligence
-                    </div>
-
-                    <div class="section-subtitle">
-                        Extracted and validated location information
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="resultGrid"
-                class="result-grid"
-            ></div>
-
-        </section>
-
-
-        <!-- =================================================
-             CONFIDENCE
-        ================================================== -->
-
-        <section class="section">
-
-            <div class="section-header">
-
-                <div>
-
-                    <div class="section-title">
-                        🧠 Confidence Analysis
-                    </div>
-
-                    <div class="section-subtitle">
-                        Evidence-based address resolution confidence
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="confidence-layout">
-
-
-                <div class="score-panel">
-
-                    <div class="score-circle">
-
-                        <span
-                            id="confidenceScore"
-                            class="score-number"
-                        >
-                            0%
-                        </span>
-
-                    </div>
-
-
-                    <span
-                        id="confidenceLevel"
-                        class="level-badge"
-                    >
-                        -
-                    </span>
-
-
-                    <div
-                        id="confidenceDecision"
-                        class="decision"
-                    >
-                        -
-                    </div>
-
-                </div>
-
-
-                <div class="evidence-panel">
-
-                    <h4>
-                        Verification Evidence
-                    </h4>
-
-                    <ul
-                        id="evidenceList"
-                        class="evidence-list"
-                    ></ul>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             NORMALIZED ADDRESS
-        ================================================== -->
-
-        <section class="section">
-
-            <div class="section-header">
-
-                <div>
-
-                    <div class="section-title">
-                        ✨ Normalized Address
-                    </div>
-
-                    <div class="section-subtitle">
-                        Standardized representation generated by SmartGeoAI
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="normalized-box">
-
-                <div class="normalized-label">
-                    Standardized Address
-                </div>
-
-                <div
-                    id="normalizedAddress"
-                    class="normalized-value"
-                >
-                    -
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             PINCODE VALIDATION
-        ================================================== -->
-
-        <section class="section">
-
-            <div class="section-header">
-
-                <div>
-
-                    <div class="section-title">
-                        📮 Pincode Validation
-                    </div>
-
-                    <div class="section-subtitle">
-                        Database verification for the supplied pincode
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div id="pincodeStatus"></div>
-
-        </section>
-
-
-        <!-- =================================================
-             MAP
-        ================================================== -->
-
-        <section class="section">
-
-            <div class="section-header">
-
-                <div>
-
-                    <div class="section-title">
-                        🗺️ Interactive Location Map
-                    </div>
-
-                    <div class="section-subtitle">
-                        Visual representation of the resolved coordinates
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="map-wrapper">
-
-                <div class="map-toolbar">
-
-                    <div>
-
-                        <span style="color:#667085;">
-                            Coordinates:
-                        </span>
-
-                        <span
-                            id="coordinates"
-                            class="coordinates"
-                        >
-                            -
-                        </span>
-
-                    </div>
-
-
-                    <a
-                        id="mapLink"
-                        class="map-link"
-                        href="#"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        🌍 Open Full Map ↗
-                    </a>
-
-                </div>
-
-
-                <iframe
-                    id="mapFrame"
-                    title="SmartGeoAI Interactive Map"
-                    loading="lazy"
-                ></iframe>
-
-            </div>
-
-        </section>
-
-
-        <!-- =================================================
-             SEARCH HISTORY
-        ================================================== -->
-
-        <section class="section">
-
-            <div class="section-header">
-
-                <div>
-
-                    <div class="section-title">
-                        🕘 Recent Searches
-                    </div>
-
-                    <div class="section-subtitle">
-                        Your latest address resolutions
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="historyList"
-                class="history-list"
-            >
-
-                <div style="color:#667085;font-size:14px;">
-                    No searches yet.
-                </div>
-
-            </div>
-
-        </section>
-
-
-    </div>
+</div>
 
 </main>
 
 
-<!-- =========================================================
-     FOOTER
-========================================================= -->
-
 <footer>
 
-    <div class="footer-brand">
-        SmartGeoAI
-    </div>
+<strong>SmartGeoAI</strong><br>
 
-    Intelligent Address Resolution • Pincode Validation • Geospatial Intelligence
+Intelligent Address Resolution • Pincode Validation • Geospatial Intelligence
 
 </footer>
 
 
 <script>
 
-/* ============================================================
-   BACKEND CONFIGURATION
-============================================================ */
-
-const BACKEND_URL =
-    "http://127.0.0.1:8000";
+const BACKEND_URL = "http://127.0.0.1:8000";
 
 
-/* ============================================================
-   ELEMENTS
-============================================================ */
+const input =
+document.getElementById("addressInput");
 
-const addressInput =
-    document.getElementById(
-        "addressInput"
-    );
-
-const searchButton =
-    document.getElementById(
-        "searchButton"
-    );
+const button =
+document.getElementById("searchButton");
 
 const status =
-    document.getElementById(
-        "status"
-    );
+document.getElementById("status");
 
 const results =
-    document.getElementById(
-        "results"
-    );
-
-const resultGrid =
-    document.getElementById(
-        "resultGrid"
-    );
-
-const confidenceScore =
-    document.getElementById(
-        "confidenceScore"
-    );
-
-const confidenceLevel =
-    document.getElementById(
-        "confidenceLevel"
-    );
-
-const confidenceDecision =
-    document.getElementById(
-        "confidenceDecision"
-    );
-
-const evidenceList =
-    document.getElementById(
-        "evidenceList"
-    );
-
-const normalizedAddress =
-    document.getElementById(
-        "normalizedAddress"
-    );
-
-const pincodeStatus =
-    document.getElementById(
-        "pincodeStatus"
-    );
-
-const coordinates =
-    document.getElementById(
-        "coordinates"
-    );
-
-const mapFrame =
-    document.getElementById(
-        "mapFrame"
-    );
-
-const mapLink =
-    document.getElementById(
-        "mapLink"
-    );
-
-const resultDecision =
-    document.getElementById(
-        "resultDecision"
-    );
-
-const historyList =
-    document.getElementById(
-        "historyList"
-    );
+document.getElementById("results");
 
 
-/* ============================================================
-   SEARCH EVENTS
-============================================================ */
+function useExample(address){
 
-searchButton.addEventListener(
-    "click",
-    resolveAddress
+input.value = address;
+
+input.focus();
+
+}
+
+
+button.addEventListener(
+"click",
+resolveAddress
 );
 
 
-addressInput.addEventListener(
-    "keydown",
-    function(event) {
+input.addEventListener(
+"keydown",
+function(event){
 
-        if(event.key === "Enter") {
+if(event.key === "Enter"){
 
-            resolveAddress();
+resolveAddress();
 
-        }
+}
 
-    }
+}
 );
 
 
-/* ============================================================
-   EXAMPLE BUTTON
-============================================================ */
+async function resolveAddress(){
 
-function useExample(address) {
+const address =
+input.value.trim();
 
-    addressInput.value =
-        address;
 
-    addressInput.focus();
+if(!address){
+
+status.innerHTML =
+'<span style="color:#d92d20;">' +
+'⚠ Please enter an address.' +
+'</span>';
+
+return;
 
 }
 
 
-/* ============================================================
-   RESOLVE ADDRESS
-============================================================ */
+button.disabled = true;
 
-async function resolveAddress() {
+button.textContent =
+"⏳ Resolving...";
 
-    const address =
-        addressInput.value.trim();
-
-
-    if(!address) {
-
-        status.innerHTML =
-            '<span style="color:#d92d20;">' +
-            '⚠ Please enter an address.' +
-            '</span>';
-
-        addressInput.focus();
-
-        return;
-    }
+status.innerHTML =
+'<span style="color:#667085;">' +
+'Connecting to SmartGeoAI...' +
+'</span>';
 
 
-    searchButton.disabled =
-        true;
+try{
 
-    searchButton.textContent =
-        "⏳ Resolving...";
+const response =
+await fetch(
+BACKEND_URL + "/resolve_address",
+{
 
+method:"POST",
 
-    results.style.display =
-        "none";
+headers:{
+"Content-Type":"application/json",
+"Accept":"application/json"
+},
 
+body:JSON.stringify({
+address:address
+})
 
-    status.innerHTML =
-        '<span style="color:#667085;">' +
-        'Connecting to SmartGeoAI' +
-        '<span class="loading-dot"></span>' +
-        '</span>';
-
-
-    try {
-
-        const response =
-            await fetch(
-                BACKEND_URL +
-                "/resolve_address",
-                {
-
-                    method:
-                        "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json",
-
-                        "Accept":
-                            "application/json"
-
-                    },
-
-                    body:
-                        JSON.stringify({
-                            address: address
-                        })
-
-                }
-            );
+}
+);
 
 
-        if(!response.ok) {
+if(!response.ok){
 
-            const errorText =
-                await response.text();
-
-            console.error(
-                "Backend response:",
-                errorText
-            );
-
-            throw new Error(
-                "Backend returned HTTP " +
-                response.status
-            );
-        }
-
-
-        const data =
-            await response.json();
-
-
-        console.log(
-            "SmartGeoAI:",
-            data
-        );
-
-
-        if(
-            data.success !== true
-        ) {
-
-            throw new Error(
-                data.message ||
-                "Address resolution failed"
-            );
-        }
-
-
-        displayResults(
-            data
-        );
-
-
-        results.style.display =
-            "block";
-
-
-        status.innerHTML =
-            '<span style="color:#16834d;">' +
-            '✓ Address resolved successfully.' +
-            '</span>';
-
-
-        addHistory(
-            data
-        );
-
-
-        results.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-
-    }
-
-
-    catch(error) {
-
-        console.error(
-            "SmartGeoAI error:",
-            error
-        );
-
-
-        status.innerHTML =
-            '<span style="color:#d92d20;">' +
-            '✗ Unable to connect to SmartGeoAI backend.' +
-            '<br>' +
-            '<small>' +
-            'Please make sure the backend is running on port 8000.' +
-            '</small>' +
-            '</span>';
-
-    }
-
-
-    finally {
-
-        searchButton.disabled =
-            false;
-
-        searchButton.textContent =
-            "🔍 Search Address";
-
-    }
+throw new Error(
+"Backend returned HTTP " +
+response.status
+);
 
 }
 
 
-/* ============================================================
-   DISPLAY RESULTS
-============================================================ */
-
-function displayResults(data) {
-
-    const result =
-        data.address_results;
+const data =
+await response.json();
 
 
-    resultGrid.innerHTML =
-        "";
+console.log(
+"SmartGeoAI response:",
+data
+);
 
 
-    addResult(
-        "Original Address",
-        result.original
-    );
+if(!data.success){
 
-
-    addResult(
-        "Landmark",
-        result.landmark
-    );
-
-
-    addResult(
-        "City",
-        result.city
-    );
-
-
-    addResult(
-        "State",
-        result.state
-    );
-
-
-    addResult(
-        "Pincode",
-        result.pincode
-    );
-
-
-    addResult(
-        "District",
-        result.district
-    );
-
-
-    addResult(
-        "Latitude",
-        result.latitude
-    );
-
-
-    addResult(
-        "Longitude",
-        result.longitude
-    );
-
-
-    normalizedAddress.textContent =
-        data.normalized_address ||
-        "Not available";
-
-
-    displayConfidence(
-        data.confidence
-    );
-
-
-    displayPincode(
-        data.pincode_validation
-    );
-
-
-    displayMap(
-        result.latitude,
-        result.longitude
-    );
-
-
-    if(
-        data.confidence
-    ) {
-
-        resultDecision.textContent =
-            data.confidence.decision;
-
-    }
+throw new Error(
+data.message ||
+"Address resolution failed"
+);
 
 }
 
 
-/* ============================================================
-   RESULT CARD
-============================================================ */
+displayResults(data);
 
-function addResult(
-    label,
-    value
-) {
+results.style.display =
+"block";
 
-    const box =
-        document.createElement(
-            "div"
-        );
-
-    box.className =
-        "result-box";
+status.innerHTML =
+'<span style="color:#16834d;">' +
+'✓ Address resolved successfully.' +
+'</span>';
 
 
-    const labelElement =
-        document.createElement(
-            "div"
-        );
-
-    labelElement.className =
-        "result-label";
-
-    labelElement.textContent =
-        label;
+saveHistory(data);
 
 
-    const valueElement =
-        document.createElement(
-            "div"
-        );
-
-    valueElement.className =
-        "result-value";
-
-    valueElement.textContent =
-        value !== null &&
-        value !== undefined &&
-        value !== ""
-            ? value
-            : "Not available";
+results.scrollIntoView({
+behavior:"smooth"
+});
 
 
-    box.appendChild(
-        labelElement
-    );
+}
 
-    box.appendChild(
-        valueElement
-    );
+catch(error){
 
-    resultGrid.appendChild(
-        box
-    );
+console.error(error);
+
+status.innerHTML =
+'<span style="color:#d92d20;">' +
+'✗ ' +
+error.message +
+'</span>';
+
+}
+
+finally{
+
+button.disabled = false;
+
+button.textContent =
+"🔍 Search Address";
+
+}
 
 }
 
 
-/* ============================================================
-   CONFIDENCE
-============================================================ */
+function displayResults(data){
 
-function displayConfidence(
-    confidence
-) {
-
-    if(!confidence) {
-
-        return;
-    }
+const result =
+data.address_results;
 
 
-    const score =
-        Number(
-            confidence.score || 0
-        );
+const grid =
+document.getElementById("resultGrid");
 
 
-    confidenceScore.textContent =
-        score + "%";
+grid.innerHTML = "";
 
 
-    confidenceLevel.textContent =
-        confidence.level ||
-        "-";
+addResult("Original Address",result.original);
+
+addResult("Landmark",result.landmark);
+
+addResult("City",result.city);
+
+addResult("State",result.state);
+
+addResult("Pincode",result.pincode);
+
+addResult("District",result.district);
+
+addResult("Latitude",result.latitude);
+
+addResult("Longitude",result.longitude);
 
 
-    confidenceDecision.textContent =
-        confidence.decision ||
-        "-";
+document.getElementById(
+"normalized"
+).textContent =
+data.normalized_address ||
+"Not available";
 
 
-    evidenceList.innerHTML =
-        "";
+if(data.confidence){
+
+document.getElementById("score").textContent =
+data.confidence.score + "%";
+
+document.getElementById("level").textContent =
+data.confidence.level || "-";
+
+document.getElementById("confidenceDecision").textContent =
+data.confidence.decision || "-";
 
 
-    if(
-        Array.isArray(
-            confidence.evidence
-        )
-    ) {
-
-        confidence.evidence.forEach(
-            function(item) {
-
-                const li =
-                    document.createElement(
-                        "li"
-                    );
-
-                li.textContent =
-                    item;
-
-                evidenceList.appendChild(
-                    li
-                );
-
-            }
-        );
-
-    }
-
-}
+const evidence =
+document.getElementById("evidence");
 
 
-/* ============================================================
-   PINCODE
-============================================================ */
-
-function displayPincode(
-    validation
-) {
-
-    if(!validation) {
-
-        pincodeStatus.innerHTML =
-            "";
-
-        return;
-    }
+evidence.innerHTML = "";
 
 
-    if(validation.valid) {
+(data.confidence.evidence || [])
+.forEach(function(item){
 
-        pincodeStatus.innerHTML = `
+const li =
+document.createElement("li");
 
-            <div class="pincode-valid">
+li.textContent =
+item;
 
-                <span style="font-size:22px;">
-                    ✓
-                </span>
+evidence.appendChild(li);
 
-                <div>
+});
 
-                    <div>
-                        Pincode verified successfully
-                    </div>
 
-                    <small style="font-weight:500;">
-                        ${escapeHtml(validation.pincode || "")}
-                        •
-                        ${escapeHtml(validation.district || "District unavailable")}
-                        •
-                        ${escapeHtml(validation.state || "State unavailable")}
-                    </small>
-
-                </div>
-
-            </div>
-
-        `;
-
-    }
-
-    else {
-
-        pincodeStatus.innerHTML = `
-
-            <div class="pincode-invalid">
-
-                ✗ Pincode could not be verified
-                against the SmartGeoAI database.
-
-            </div>
-
-        `;
-
-    }
+document.getElementById("decision").textContent =
+" • " +
+data.confidence.decision;
 
 }
 
 
-/* ============================================================
-   MAP
-============================================================ */
-
-function displayMap(
-    latitude,
-    longitude
-) {
-
-    if(
-        latitude === null ||
-        latitude === undefined ||
-        longitude === null ||
-        longitude === undefined
-    ) {
-
-        coordinates.textContent =
-            "Coordinates unavailable";
-
-        mapFrame.src =
-            "about:blank";
-
-        mapLink.removeAttribute(
-            "href"
-        );
-
-        return;
-    }
+displayPincode(
+data.pincode_validation
+);
 
 
-    const lat =
-        Number(latitude);
-
-    const lon =
-        Number(longitude);
-
-
-    coordinates.textContent =
-        lat +
-        ", " +
-        lon;
-
-
-    const delta =
-        0.015;
-
-
-    const left =
-        lon - delta;
-
-    const right =
-        lon + delta;
-
-    const top =
-        lat + delta;
-
-    const bottom =
-        lat - delta;
-
-
-    const embedUrl =
-        "https://www.openstreetmap.org/export/embed.html" +
-        "?bbox=" +
-        encodeURIComponent(left) +
-        "%2C" +
-        encodeURIComponent(bottom) +
-        "%2C" +
-        encodeURIComponent(right) +
-        "%2C" +
-        encodeURIComponent(top) +
-        "&layer=mapnik" +
-        "&marker=" +
-        encodeURIComponent(lat) +
-        "%2C" +
-        encodeURIComponent(lon);
-
-
-    mapFrame.src =
-        embedUrl;
-
-
-    const fullMapUrl =
-        "https://www.openstreetmap.org/" +
-        "?mlat=" +
-        encodeURIComponent(lat) +
-        "&mlon=" +
-        encodeURIComponent(lon) +
-        "#map=15/" +
-        encodeURIComponent(lat) +
-        "/" +
-        encodeURIComponent(lon);
-
-
-    mapLink.href =
-        fullMapUrl;
+displayMap(
+result.latitude,
+result.longitude
+);
 
 }
 
 
-/* ============================================================
-   SEARCH HISTORY
-============================================================ */
+function addResult(label,value){
 
-function addHistory(data) {
+const box =
+document.createElement("div");
 
-    let history =
-        JSON.parse(
-            localStorage.getItem(
-                "smartgeoai_history"
-            ) || "[]"
-        );
+box.className =
+"result-box";
 
 
-    const item = {
+const labelDiv =
+document.createElement("div");
 
-        address:
-            data.original_address,
+labelDiv.className =
+"result-label";
 
-        normalized:
-            data.normalized_address,
-
-        confidence:
-            data.confidence
-                ? data.confidence.score
-                : null,
-
-        time:
-            new Date().toLocaleString()
-
-    };
+labelDiv.textContent =
+label;
 
 
-    history.unshift(
-        item
-    );
+const valueDiv =
+document.createElement("div");
+
+valueDiv.className =
+"result-value";
+
+valueDiv.textContent =
+value !== null &&
+value !== undefined &&
+value !== ""
+? value
+: "Not available";
 
 
-    history =
-        history.slice(
-            0,
-            6
-        );
+box.appendChild(labelDiv);
 
+box.appendChild(valueDiv);
 
-    localStorage.setItem(
-        "smartgeoai_history",
-        JSON.stringify(history)
-    );
-
-
-    renderHistory();
+document
+.getElementById("resultGrid")
+.appendChild(box);
 
 }
 
 
-/* ============================================================
-   RENDER HISTORY
-============================================================ */
+function displayPincode(validation){
 
-function renderHistory() {
-
-    const history =
-        JSON.parse(
-            localStorage.getItem(
-                "smartgeoai_history"
-            ) || "[]"
-        );
+const element =
+document.getElementById("pincode");
 
 
-    if(history.length === 0) {
+if(!validation){
 
-        historyList.innerHTML = `
+element.innerHTML = "";
 
-            <div style="color:#667085;font-size:14px;">
-                No searches yet.
-            </div>
-
-        `;
-
-        return;
-    }
-
-
-    historyList.innerHTML =
-        "";
-
-
-    history.forEach(
-        function(item) {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-            div.className =
-                "history-item";
-
-
-            div.innerHTML = `
-
-                <div class="history-address">
-                    ${escapeHtml(item.address)}
-                </div>
-
-                <div class="history-meta">
-                    ${escapeHtml(item.time)}
-                    ${
-                        item.confidence !== null
-                        ? " • Confidence: " +
-                          item.confidence +
-                          "%"
-                        : ""
-                    }
-                </div>
-
-            `;
-
-
-            div.addEventListener(
-                "click",
-                function() {
-
-                    addressInput.value =
-                        item.address;
-
-                    addressInput.focus();
-
-                }
-            );
-
-
-            historyList.appendChild(
-                div
-            );
-
-        }
-    );
+return;
 
 }
 
 
-/* ============================================================
-   HTML ESCAPE
-============================================================ */
+if(validation.valid){
 
-function escapeHtml(value) {
+element.innerHTML = `
 
-    return String(
-        value ?? ""
-    )
-    .replace(
-        /&/g,
-        "&amp;"
-    )
-    .replace(
-        /</g,
-        "&lt;"
-    )
-    .replace(
-        />/g,
-        "&gt;"
-    )
-    .replace(
-        /"/g,
-        "&quot;"
-    )
-    .replace(
-        /'/g,
-        "&#039;"
-    );
+<div class="valid">
+
+✓ Pincode verified successfully
+
+<br>
+
+<small>
+
+${validation.pincode || ""}
+
+•
+
+${validation.district || ""}
+
+•
+
+${validation.state || ""}
+
+</small>
+
+</div>
+
+`;
+
+}else{
+
+element.innerHTML = `
+
+<div class="invalid">
+
+✗ Pincode could not be verified
+against the SmartGeoAI database.
+
+</div>
+
+`;
+
+}
 
 }
 
 
-/* ============================================================
-   LOAD HISTORY
-============================================================ */
+function displayMap(latitude,longitude){
+
+const frame =
+document.getElementById("map");
+
+const coords =
+document.getElementById("coordinates");
+
+const link =
+document.getElementById("mapLink");
+
+
+if(
+latitude === null ||
+latitude === undefined ||
+longitude === null ||
+longitude === undefined
+){
+
+coords.textContent =
+"Coordinates unavailable";
+
+frame.src =
+"about:blank";
+
+link.removeAttribute("href");
+
+return;
+
+}
+
+
+const lat =
+Number(latitude);
+
+const lon =
+Number(longitude);
+
+
+coords.textContent =
+lat + ", " + lon;
+
+
+const delta =
+0.015;
+
+
+const bbox =
+(lon-delta) +
+"%2C" +
+(lat-delta) +
+"%2C" +
+(lon+delta) +
+"%2C" +
+(lat+delta);
+
+
+frame.src =
+"https://www.openstreetmap.org/export/embed.html" +
+"?bbox=" +
+bbox +
+"&layer=mapnik" +
+"&marker=" +
+lat +
+"%2C" +
+lon;
+
+
+link.href =
+"https://www.openstreetmap.org/" +
+"?mlat=" +
+lat +
+"&mlon=" +
+lon +
+"#map=15/" +
+lat +
+"/" +
+lon;
+
+}
+
+
+function saveHistory(data){
+
+let history =
+JSON.parse(
+localStorage.getItem(
+"smartgeoai_history"
+) || "[]"
+);
+
+
+history.unshift({
+
+address:
+data.original_address,
+
+time:
+new Date().toLocaleString(),
+
+confidence:
+data.confidence
+? data.confidence.score
+: null
+
+});
+
+
+history =
+history.slice(0,6);
+
+
+localStorage.setItem(
+"smartgeoai_history",
+JSON.stringify(history)
+);
+
 
 renderHistory();
 
-
-/* ============================================================
-   BACKEND HEALTH CHECK
-============================================================ */
-
-async function checkBackend() {
-
-    try {
-
-        const response =
-            await fetch(
-                BACKEND_URL +
-                "/health"
-            );
+}
 
 
-        if(!response.ok) {
+function renderHistory(){
 
-            throw new Error(
-                "Health check failed"
-            );
-        }
+const element =
+document.getElementById("history");
 
 
-        const data =
-            await response.json();
+const history =
+JSON.parse(
+localStorage.getItem(
+"smartgeoai_history"
+) || "[]"
+);
 
 
-        console.log(
-            "SmartGeoAI backend:",
-            data
-        );
+if(history.length === 0){
 
+element.innerHTML =
+"No searches yet.";
 
-        if(
-            data.rows !== undefined
-        ) {
-
-            const databaseRows =
-                document.getElementById(
-                    "databaseRows"
-                );
-
-            databaseRows.textContent =
-                Number(
-                    data.rows
-                ).toLocaleString();
-
-        }
-
-    }
-
-    catch(error) {
-
-        console.warn(
-            "Backend health check:",
-            error
-        );
-
-    }
+return;
 
 }
 
 
-/* ============================================================
-   START
-============================================================ */
+element.innerHTML = "";
+
+
+history.forEach(function(item){
+
+const div =
+document.createElement("div");
+
+div.className =
+"history-item";
+
+
+div.innerHTML = `
+
+<div class="history-address">
+${item.address}
+</div>
+
+<div class="history-meta">
+${item.time}
+${
+item.confidence !== null
+? " • Confidence: " +
+item.confidence +
+"%"
+: ""
+}
+</div>
+
+`;
+
+
+element.appendChild(div);
+
+});
+
+}
+
+
+async function checkBackend(){
+
+try{
+
+const response =
+await fetch(
+BACKEND_URL + "/health"
+);
+
+
+if(!response.ok){
+
+throw new Error(
+"Backend unavailable"
+);
+
+}
+
+
+const data =
+await response.json();
+
+
+console.log(
+"Backend health:",
+data
+);
+
+
+if(data.rows !== undefined){
+
+document.getElementById(
+"rows"
+).textContent =
+Number(data.rows)
+.toLocaleString();
+
+}
+
+}
+
+catch(error){
+
+console.warn(
+"Backend health check failed:",
+error
+);
+
+}
+
+}
+
+
+renderHistory();
 
 checkBackend();
 

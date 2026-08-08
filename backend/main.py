@@ -1,152 +1,92 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
 from pydantic import BaseModel
-
 import pandas as pd
 import os
 import re
 
-
-# ============================================================
-# SMARTGEOAI APPLICATION
-# ============================================================
-
 app = FastAPI(
     title="SmartGeoAI",
-    description="Intelligent Address Resolution and Geospatial Validation",
-    version="2.0"
+    description="Intelligent Address Resolution & Geospatial Intelligence",
+    version="1.0.0"
 )
-
-
-# ============================================================
-# CORS
-# ============================================================
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
-
-# ============================================================
-# PROJECT PATHS
-# ============================================================
-
-BACKEND_DIR = os.path.dirname(
-    os.path.abspath(__file__)
-)
-
-PROJECT_DIR = os.path.dirname(
-    BACKEND_DIR
+BASE_DIR = os.path.dirname(
+    os.path.dirname(
+        os.path.abspath(__file__)
+    )
 )
 
 DATA_DIR = os.path.join(
-    PROJECT_DIR,
+    BASE_DIR,
     "data"
 )
 
-INDEX_FILE = os.path.join(
-    PROJECT_DIR,
-    "index.html"
-)
+database = pd.DataFrame()
 
 
 # ============================================================
-# DATABASE
+# LOAD EXCEL DATABASE
 # ============================================================
-
-pincode_df = None
-
 
 def load_database():
 
-    global pincode_df
-
-    print()
-    print("=" * 70)
-    print("SMARTGEOAI DATABASE")
-    print("=" * 70)
+    global database
 
     if not os.path.exists(DATA_DIR):
-
-        print("ERROR: data folder not found")
-        print("Expected:", DATA_DIR)
-
+        print("WARNING: data folder not found.")
         return
 
-    excel_files = []
-
-    for filename in os.listdir(DATA_DIR):
-
-        if filename.lower().endswith(
-            (".xlsx", ".xls")
-        ):
-
-            excel_files.append(
-                os.path.join(
-                    DATA_DIR,
-                    filename
-                )
-            )
+    excel_files = [
+        file
+        for file in os.listdir(DATA_DIR)
+        if file.lower().endswith((".xlsx", ".xls"))
+    ]
 
     if not excel_files:
-
-        print("ERROR: No Excel file found")
-        print("Put your Excel file inside:")
-        print(DATA_DIR)
-
+        print("WARNING: No Excel file found in data folder.")
         return
 
-    excel_file = excel_files[0]
-
-    print(
-        "Loading:",
-        os.path.basename(excel_file)
+    excel_file = os.path.join(
+        DATA_DIR,
+        excel_files[0]
     )
 
     try:
 
-        pincode_df = pd.read_excel(
+        database = pd.read_excel(
             excel_file
         )
 
-        pincode_df.columns = [
+        database.columns = [
             str(column).strip()
-            for column in pincode_df.columns
+            for column in database.columns
         ]
 
-        print(
-            "Rows:",
-            len(pincode_df)
-        )
-
-        print(
-            "Columns:",
-            list(pincode_df.columns)
-        )
-
-        print(
-            "Database loaded successfully."
-        )
+        print("=" * 60)
+        print("SmartGeoAI Database Loaded")
+        print("=" * 60)
+        print("File:", excel_file)
+        print("Rows:", len(database))
+        print("Columns:", list(database.columns))
+        print("=" * 60)
 
     except Exception as error:
 
-        print(
-            "ERROR loading Excel:",
-            error
-        )
+        print("ERROR loading Excel:")
+        print(error)
 
-        pincode_df = None
-
-    print("=" * 70)
-    print()
+        database = pd.DataFrame()
 
 
-# Load database when server starts
 load_database()
 
 
@@ -160,297 +100,67 @@ class AddressRequest(BaseModel):
 
 
 # ============================================================
-# COLUMN NORMALIZATION
+# FIND COLUMN
 # ============================================================
 
-def clean_column_name(
-    value
-):
+def find_column(names):
 
-    return (
-        str(value)
-        .lower()
-        .replace(" ", "")
-        .replace("_", "")
-        .replace("-", "")
-        .replace(".", "")
-        .strip()
-    )
-
-
-def find_column(
-    possible_names
-):
-
-    if pincode_df is None:
-
+    if database.empty:
         return None
 
-    wanted = [
-        clean_column_name(name)
-        for name in possible_names
-    ]
+    for column in database.columns:
 
-    for column in pincode_df.columns:
-
-        current = clean_column_name(
-            column
+        column_name = (
+            str(column)
+            .strip()
+            .lower()
+            .replace(" ", "")
+            .replace("_", "")
         )
 
-        if current in wanted:
+        for name in names:
 
-            return column
+            search_name = (
+                str(name)
+                .strip()
+                .lower()
+                .replace(" ", "")
+                .replace("_", "")
+            )
+
+            if column_name == search_name:
+                return column
 
     return None
 
 
 # ============================================================
-# GET VALUE FROM DATABASE
+# EXTRACT PINCODE
 # ============================================================
 
-def get_value(
-    row,
-    possible_names
-):
-
-    column = find_column(
-        possible_names
-    )
-
-    if column is None:
-
-        return None
-
-    try:
-
-        value = row[column]
-
-        if pd.isna(value):
-
-            return None
-
-        return str(value).strip()
-
-    except Exception:
-
-        return None
-
-
-# ============================================================
-# GET NUMERIC VALUE
-# ============================================================
-
-def get_number(
-    row,
-    possible_names
-):
-
-    column = find_column(
-        possible_names
-    )
-
-    if column is None:
-
-        return None
-
-    try:
-
-        value = row[column]
-
-        if pd.isna(value):
-
-            return None
-
-        return float(value)
-
-    except Exception:
-
-        return None
-
-
-# ============================================================
-# PINCODE NORMALIZATION
-# ============================================================
-
-def normalize_pincode(
-    value
-):
-
-    if value is None:
-
-        return None
+def extract_pincode(address):
 
     match = re.search(
-        r"\b\d{6}\b",
-        str(value)
+        r"\b[1-9][0-9]{5}\b",
+        address
     )
 
     if match:
-
-        return match.group()
-
-    return None
-
-
-# ============================================================
-# FIND PINCODE IN DATABASE
-# ============================================================
-
-def search_pincode(
-    pincode
-):
-
-    if pincode_df is None:
-
-        return None
-
-    column = find_column(
-        [
-            "pincode",
-            "pin",
-            "pin_code",
-            "postalcode",
-            "postal_code",
-            "postcode"
-        ]
-    )
-
-    if column is None:
-
-        return None
-
-    target = normalize_pincode(
-        pincode
-    )
-
-    if target is None:
-
-        return None
-
-    for _, row in pincode_df.iterrows():
-
-        current = normalize_pincode(
-            row[column]
-        )
-
-        if current == target:
-
-            return row
+        return match.group(0)
 
     return None
 
 
 # ============================================================
-# CITY DETECTION
+# EXTRACT LANDMARK
 # ============================================================
 
-CITY_MAP = {
-
-    "vijayawada":
-        "Vijayawada",
-
-    "guntur":
-        "Guntur",
-
-    "hyderabad":
-        "Hyderabad",
-
-    "visakhapatnam":
-        "Visakhapatnam",
-
-    "vizag":
-        "Visakhapatnam",
-
-    "tenali":
-        "Tenali",
-
-    "tirupati":
-        "Tirupati",
-
-    "nellore":
-        "Nellore",
-
-    "kakinada":
-        "Kakinada",
-
-    "rajahmundry":
-        "Rajahmundry",
-
-    "kurnool":
-        "Kurnool",
-
-    "kadapa":
-        "Kadapa",
-
-    "ongole":
-        "Ongole",
-
-    "eluru":
-        "Eluru",
-
-    "warangal":
-        "Warangal",
-
-    "amaravati":
-        "Amaravati",
-
-    "machilipatnam":
-        "Machilipatnam",
-
-    "anantapur":
-        "Anantapur",
-
-    "chittoor":
-        "Chittoor",
-
-    "srikakulam":
-        "Srikakulam"
-}
-
-
-def detect_city(
-    address
-):
-
-    text = address.lower()
-
-    for key, city in CITY_MAP.items():
-
-        pattern = (
-            r"\b"
-            + re.escape(key)
-            + r"\b"
-        )
-
-        if re.search(
-            pattern,
-            text
-        ):
-
-            return city
-
-    return None
-
-
-# ============================================================
-# LANDMARK DETECTION
-# ============================================================
-
-def detect_landmark(
-    address
-):
+def extract_landmark(address):
 
     patterns = [
-
-        r"\bnear\s+(.+?)(?=\s*,|\s+\d{6}\b|$)",
-
-        r"\bopposite\s+(.+?)(?=\s*,|\s+\d{6}\b|$)",
-
-        r"\bopp\.?\s+(.+?)(?=\s*,|\s+\d{6}\b|$)",
-
-        r"\bbehind\s+(.+?)(?=\s*,|\s+\d{6}\b|$)",
-
-        r"\bnearby\s+(.+?)(?=\s*,|\s+\d{6}\b|$)"
+        r"near\s+(.+?)(?:,|\s+\d{6}|$)",
+        r"opposite\s+(.+?)(?:,|\s+\d{6}|$)",
+        r"beside\s+(.+?)(?:,|\s+\d{6}|$)"
     ]
 
     for pattern in patterns:
@@ -463,373 +173,427 @@ def detect_landmark(
 
         if match:
 
-            landmark = (
+            return (
                 match.group(1)
                 .strip()
-                .strip(",")
+                .title()
             )
 
-            if landmark:
+    return "Not identified"
 
-                return landmark.title()
+
+# ============================================================
+# EXTRACT CITY
+# ============================================================
+
+def extract_city(address):
+
+    parts = [
+        part.strip()
+        for part in address.split(",")
+        if part.strip()
+    ]
+
+    ignored_states = [
+        "andhra pradesh",
+        "telangana",
+        "karnataka",
+        "tamil nadu",
+        "kerala"
+    ]
+
+    for part in parts:
+
+        if re.search(
+            r"\b[1-9][0-9]{5}\b",
+            part
+        ):
+            continue
+
+        lower = part.lower()
+
+        if lower in ignored_states:
+            continue
+
+        if lower.startswith("near "):
+            continue
+
+        if lower.startswith("opposite "):
+            continue
+
+        if lower.startswith("beside "):
+            continue
+
+        return part.title()
+
+    return "Not identified"
+
+
+# ============================================================
+# FIND PINCODE ROW
+# ============================================================
+
+def find_pincode_row(pincode):
+
+    if database.empty:
+        return None
+
+    pincode_column = find_column([
+        "pincode",
+        "pin code"
+    ])
+
+    if pincode_column is None:
+        return None
+
+    try:
+
+        values = (
+            database[pincode_column]
+            .astype(str)
+            .str.extract(r"(\d{6})")[0]
+        )
+
+        matches = database[
+            values == str(pincode)
+        ]
+
+        if len(matches) > 0:
+            return matches.iloc[0]
+
+    except Exception as error:
+
+        print(
+            "Pincode search error:",
+            error
+        )
 
     return None
 
 
 # ============================================================
-# PARSE ADDRESS
+# SAFE VALUE
 # ============================================================
 
-def parse_address(
-    address
-):
+def safe_value(value):
 
-    pincode_match = re.search(
-        r"\b\d{6}\b",
-        address
-    )
+    try:
 
-    pincode = None
+        if pd.isna(value):
+            return None
 
-    if pincode_match:
+    except Exception:
+        pass
 
-        pincode = (
-            pincode_match.group()
-        )
-
-    return {
-
-        "original":
-            address,
-
-        "landmark":
-            detect_landmark(
-                address
-            ),
-
-        "city":
-            detect_city(
-                address
-            ),
-
-        "pincode":
-            pincode
-    }
+    return value
 
 
 # ============================================================
-# PINCODE VALIDATION
+# GET COORDINATES
 # ============================================================
 
-def validate_pincode(
-    pincode
-):
-
-    row = search_pincode(
-        pincode
-    )
+def get_coordinates(row):
 
     if row is None:
+        return None, None
 
-        return {
+    latitude_column = find_column([
+        "latitude",
+        "lat"
+    ])
 
-            "valid":
-                False,
+    longitude_column = find_column([
+        "longitude",
+        "lon",
+        "lng",
+        "long"
+    ])
 
-            "pincode":
-                normalize_pincode(
-                    pincode
-                ),
+    latitude = None
+    longitude = None
 
-            "district":
-                None,
+    try:
 
-            "state":
-                None,
+        if latitude_column:
 
-            "latitude":
-                None,
+            value = safe_value(
+                row[latitude_column]
+            )
 
-            "longitude":
-                None
-        }
+            if value is not None:
+                latitude = float(value)
 
-    district = get_value(
-        row,
-        [
+    except Exception:
+
+        latitude = None
+
+    try:
+
+        if longitude_column:
+
+            value = safe_value(
+                row[longitude_column]
+            )
+
+            if value is not None:
+                longitude = float(value)
+
+    except Exception:
+
+        longitude = None
+
+    return latitude, longitude
+
+
+# ============================================================
+# ADDRESS RESOLUTION
+# ============================================================
+
+def resolve_address_logic(address):
+
+    pincode = extract_pincode(address)
+
+    landmark = extract_landmark(address)
+
+    city = extract_city(address)
+
+    row = None
+
+    if pincode:
+
+        row = find_pincode_row(
+            pincode
+        )
+
+    district = "Not available"
+    state = "Not available"
+
+    latitude = None
+    longitude = None
+
+    if row is not None:
+
+        district_column = find_column([
             "district",
-            "districtname",
-            "district_name"
-        ]
-    )
+            "district name",
+            "districtname"
+        ])
 
-    state = get_value(
-        row,
-        [
+        state_column = find_column([
             "state",
-            "statename",
-            "state_name"
-        ]
-    )
+            "state name",
+            "statename"
+        ])
 
-    latitude = get_number(
-        row,
-        [
-            "latitude",
-            "lat"
-        ]
-    )
+        if district_column:
 
-    longitude = get_number(
-        row,
-        [
-            "longitude",
-            "long",
-            "lng"
-        ]
-    )
+            value = safe_value(
+                row[district_column]
+            )
 
-    return {
+            if value is not None:
+                district = str(value)
 
-        "valid":
-            True,
+        if state_column:
 
-        "pincode":
-            normalize_pincode(
-                pincode
-            ),
+            value = safe_value(
+                row[state_column]
+            )
 
-        "district":
-            district,
+            if value is not None:
+                state = str(value)
 
-        "state":
-            state,
+        latitude, longitude = get_coordinates(
+            row
+        )
 
-        "latitude":
-            latitude,
-
-        "longitude":
-            longitude
-    }
-
-
-# ============================================================
-# CONFIDENCE SCORE
-# ============================================================
-
-def calculate_confidence(
-    parsed,
-    validation
-):
+    # ========================================================
+    # CONFIDENCE
+    # ========================================================
 
     score = 0
 
     evidence = []
 
+    if row is not None:
 
-    # PINCODE
-    if validation["valid"]:
-
-        score += 50
+        score += 40
 
         evidence.append(
-            "✓ Pincode matched with database"
+            "Pincode matched with database"
         )
 
-    else:
-
-        evidence.append(
-            "✗ Pincode verification failed"
-        )
-
-
-    # COORDINATES
     if (
-        validation["latitude"]
-        is not None
+        latitude is not None
         and
-        validation["longitude"]
-        is not None
+        longitude is not None
     ):
 
-        score += 25
+        score += 30
 
         evidence.append(
-            "✓ Coordinates available"
+            "Coordinates available"
         )
 
-    else:
-
-        evidence.append(
-            "✗ Coordinates unavailable"
-        )
-
-
-    # LANDMARK
-    if parsed["landmark"]:
-
-        score += 10
-
-        evidence.append(
-            "✓ Landmark identified"
-        )
-
-    else:
-
-        evidence.append(
-            "⚠ Landmark not identified"
-        )
-
-
-    # CITY
-    if parsed["city"]:
+    if landmark != "Not identified":
 
         score += 15
 
         evidence.append(
-            "✓ City identified"
+            "Landmark identified"
         )
 
-    else:
+    if city != "Not identified":
+
+        score += 15
 
         evidence.append(
-            "⚠ City not identified"
+            "City identified"
         )
 
-
-    # LEVEL
     if score >= 80:
 
         level = "HIGH"
-
         decision = "Auto-confirm"
 
     elif score >= 50:
 
         level = "MEDIUM"
-
-        decision = "Needs verification"
+        decision = "Review recommended"
 
     else:
 
         level = "LOW"
+        decision = "Manual verification required"
 
-        decision = "Do not auto-confirm"
+    # ========================================================
+    # NORMALIZED ADDRESS
+    # ========================================================
 
+    normalized_parts = []
+
+    if landmark != "Not identified":
+
+        normalized_parts.append(
+            "Near " + landmark
+        )
+
+    if city != "Not identified":
+
+        normalized_parts.append(
+            city
+        )
+
+    if district != "Not available":
+
+        normalized_parts.append(
+            district
+        )
+
+    if state != "Not available":
+
+        normalized_parts.append(
+            state
+        )
+
+    if pincode:
+
+        normalized_parts.append(
+            pincode
+        )
+
+    normalized_address = ", ".join(
+        normalized_parts
+    )
+
+    # ========================================================
+    # RESPONSE
+    # ========================================================
 
     return {
 
-        "score":
-            score,
+        "success": True,
 
-        "level":
-            level,
+        "project": "SmartGeoAI",
 
-        "decision":
-            decision,
+        "original_address": address,
 
-        "evidence":
-            evidence
+        "address_results": {
+
+            "original": address,
+
+            "landmark": landmark,
+
+            "city": city,
+
+            "state": state,
+
+            "pincode": pincode,
+
+            "district": district,
+
+            "latitude": latitude,
+
+            "longitude": longitude
+
+        },
+
+        "normalized_address":
+            normalized_address,
+
+        "confidence": {
+
+            "score": score,
+
+            "level": level,
+
+            "decision": decision,
+
+            "evidence": evidence
+
+        },
+
+        "pincode_validation": {
+
+            "valid": row is not None,
+
+            "pincode": pincode,
+
+            "district": district,
+
+            "state": state,
+
+            "latitude": latitude,
+
+            "longitude": longitude
+
+        }
+
     }
 
 
 # ============================================================
-# NORMALIZED ADDRESS
-# ============================================================
-
-def create_normalized_address(
-    parsed,
-    validation
-):
-
-    parts = []
-
-
-    if parsed["landmark"]:
-
-        parts.append(
-            "Near " +
-            parsed["landmark"]
-        )
-
-
-    if parsed["city"]:
-
-        parts.append(
-            parsed["city"]
-        )
-
-
-    if validation["state"]:
-
-        parts.append(
-            validation["state"]
-        )
-
-
-    if validation["pincode"]:
-
-        parts.append(
-            validation["pincode"]
-        )
-
-
-    return ", ".join(parts)
-
-
-# ============================================================
-# ROOT - SERVE FRONTEND
+# ROOT
 # ============================================================
 
 @app.get("/")
-def home():
-
-    if not os.path.exists(
-        INDEX_FILE
-    ):
-
-        return {
-
-            "project":
-                "SmartGeoAI",
-
-            "status":
-                "Backend running successfully",
-
-            "message":
-                "index.html not found",
-
-            "expected_file":
-                INDEX_FILE
-        }
-
-    return FileResponse(
-        INDEX_FILE
-    )
-
-
-# ============================================================
-# RUN STATUS
-# ============================================================
-
-@app.get("/run")
-def run():
+def root():
 
     return {
 
-        "message":
-            "SmartGeoAI backend is running",
-
-        "endpoint":
-            "/resolve_address",
+        "project": "SmartGeoAI",
 
         "status":
-            "online"
+            "Backend running successfully",
+
+        "message":
+            "Use POST /resolve_address"
+
     }
 
 
 # ============================================================
-# HEALTH CHECK
+# HEALTH
 # ============================================================
 
 @app.get("/health")
@@ -837,26 +601,21 @@ def health():
 
     return {
 
-        "status":
-            "online",
+        "status": "online",
 
-        "project":
-            "SmartGeoAI",
+        "project": "SmartGeoAI",
 
         "database_loaded":
-            pincode_df is not None,
+            not database.empty,
 
         "rows":
-            (
-                len(pincode_df)
-                if pincode_df is not None
-                else 0
-            )
+            len(database)
+
     }
 
 
 # ============================================================
-# ADDRESS RESOLUTION API
+# RESOLVE ADDRESS API
 # ============================================================
 
 @app.post("/resolve_address")
@@ -864,113 +623,64 @@ def resolve_address(
     request: AddressRequest
 ):
 
-    address = (
-        request.address
-        .strip()
-    )
+    address = request.address.strip()
 
-
-    # EMPTY ADDRESS
     if not address:
 
         return {
 
-            "success":
-                False,
+            "success": False,
 
             "message":
                 "Address cannot be empty"
+
+        }
+
+    try:
+
+        return resolve_address_logic(
+            address
+        )
+
+    except Exception as error:
+
+        print(
+            "Address resolution error:",
+            error
+        )
+
+        return {
+
+            "success": False,
+
+            "message":
+                "Address resolution failed",
+
+            "error":
+                str(error)
+
         }
 
 
-    # PARSE
-    parsed = parse_address(
-        address
+print()
+print("=" * 60)
+print("SMARTGEOAI BACKEND READY")
+print("=" * 60)
+print("API  : http://127.0.0.1:8000")
+print("DOCS : http://127.0.0.1:8000/docs")
+print("=" * 60)
+print()
+@app.get("/app")
+def frontend():
+    index_file = os.path.join(
+        FRONTEND_DIR,
+        "index.html"
     )
 
+    if os.path.exists(index_file):
+        return FileResponse(index_file)
 
-    # DATABASE VALIDATION
-    validation = validate_pincode(
-        parsed["pincode"]
-    )
-
-
-    # CONFIDENCE
-    confidence = calculate_confidence(
-        parsed,
-        validation
-    )
-
-
-    # NORMALIZED ADDRESS
-    normalized = (
-        create_normalized_address(
-            parsed,
-            validation
-        )
-    )
-
-
-    # FINAL RESPONSE
     return {
-
-        "success":
-            True,
-
-        "project":
-            "SmartGeoAI",
-
-        "original_address":
-            address,
-
-        "address_results": {
-
-            "original":
-                address,
-
-            "landmark":
-                (
-                    parsed["landmark"]
-                    or "Not detected"
-                ),
-
-            "city":
-                (
-                    parsed["city"]
-                    or "Not detected"
-                ),
-
-            "state":
-                (
-                    validation["state"]
-                    or "Not detected"
-                ),
-
-            "pincode":
-                (
-                    validation["pincode"]
-                    or "Not available"
-                ),
-
-            "district":
-                (
-                    validation["district"]
-                    or "Not available"
-                ),
-
-            "latitude":
-                validation["latitude"],
-
-            "longitude":
-                validation["longitude"]
-        },
-
-        "normalized_address":
-            normalized,
-
-        "confidence":
-            confidence,
-
-        "pincode_validation":
-            validation
+        "error": "frontend/index.html not found",
+        "path": index_file
     }
