@@ -1,261 +1,812 @@
+let map = null;
+let marker = null;
 
-const BACKEND_URL = "http://127.0.0.1:8000";
 
-const addressInput = document.getElementById("addressInput");
-const searchButton = document.getElementById("searchButton");
-const status = document.getElementById("status");
-const results = document.getElementById("results");
+/* =========================
+   PAGE ELEMENTS
+========================= */
 
-function useExample(address) {
-    addressInput.value = address;
-    addressInput.focus();
-}
+const addressInput =
+    document.getElementById("address");
 
-searchButton.addEventListener("click", resolveAddress);
+const resultSection =
+    document.getElementById("resultSection");
 
-addressInput.addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
-        resolveAddress();
+const result =
+    document.getElementById("result");
+
+const mapSection =
+    document.getElementById("mapSection");
+
+const resolveButton =
+    document.getElementById("resolveButton");
+
+const buttonText =
+    document.getElementById("buttonText");
+
+const loader =
+    document.getElementById("loader");
+
+const characterCount =
+    document.getElementById("characterCount");
+
+
+/* =========================
+   CHARACTER COUNT
+========================= */
+
+addressInput.addEventListener(
+    "input",
+    function () {
+
+        const count =
+            addressInput.value.length;
+
+        characterCount.textContent =
+            count + " characters";
     }
-});
+);
+
+
+/* =========================
+   ENTER KEY
+========================= */
+
+addressInput.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Enter" &&
+            event.ctrlKey
+        ) {
+
+            resolveAddress();
+
+        }
+
+    }
+);
+
+
+/* =========================
+   RESOLVE ADDRESS
+========================= */
 
 async function resolveAddress() {
 
-    const address = addressInput.value.trim();
+    const address =
+        addressInput.value.trim();
+
 
     if (!address) {
-        status.innerHTML =
-            '<span style="color:red;">⚠ Please enter an address.</span>';
+
+        showError(
+            "Please enter an Indian address.",
+            "Add locality, landmark, city, district or pincode information."
+        );
+
         return;
     }
 
-    searchButton.disabled = true;
-    searchButton.textContent = "⏳ Resolving...";
-    status.textContent = "Connecting to SmartGeoAI...";
+
+    setLoading(true);
+
+
+    resultSection.classList.remove("hidden");
+
+    mapSection.classList.add("hidden");
+
+
+    result.innerHTML = `
+
+        <div class="result-box">
+
+            <div class="result-header">
+
+                <div class="result-title">
+
+                    <span class="section-label">
+                        SMARTGEOAI ENGINE
+                    </span>
+
+                    <h2>
+                        Resolving Address
+                    </h2>
+
+                    <p>
+                        Parsing, normalizing and verifying
+                        the submitted address.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="info-card">
+
+                <span>
+                    Processing
+                </span>
+
+                <strong>
+                    Please wait while SmartGeoAI
+                    analyzes the address...
+                </strong>
+
+            </div>
+
+        </div>
+
+    `;
+
 
     try {
 
-        const response = await fetch(
-            BACKEND_URL + "/resolve_address",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    address: address
-                })
-            }
-        );
+        const response =
+            await fetch(
+                "/resolve_address",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "Accept":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        address: address
+                    })
+                }
+            );
+
+
+        let data = null;
+
+
+        try {
+
+            data =
+                await response.json();
+
+        } catch (jsonError) {
+
+            throw new Error(
+                "Backend returned an invalid response."
+            );
+
+        }
+
 
         if (!response.ok) {
-            throw new Error(
-                "Backend error: HTTP " + response.status
-            );
+
+            const message =
+                data?.error ||
+                data?.message ||
+                "Server returned HTTP " +
+                response.status;
+
+            throw new Error(message);
         }
 
-        const data = await response.json();
 
-        console.log("SmartGeoAI response:", data);
+        displayResult(
+            data,
+            address
+        );
 
-        if (!data.success) {
-            throw new Error(
-                data.message || "Address resolution failed"
-            );
-        }
-
-        displayResults(data);
-
-        results.style.display = "block";
-
-        status.innerHTML =
-            '<span style="color:green;">✓ Address resolved successfully.</span>';
-
-    } catch (error) {
-
-        console.error(error);
-
-        status.innerHTML =
-            '<span style="color:red;">✗ ' +
-            error.message +
-            "</span>";
-
-    } finally {
-
-        searchButton.disabled = false;
-        searchButton.textContent = "🔍 Search Address";
     }
+
+
+    catch (error) {
+
+        console.error(
+            "SmartGeoAI:",
+            error
+        );
+
+
+        showError(
+            "Unable to resolve this address.",
+            error.message
+        );
+
+    }
+
+
+    finally {
+
+        setLoading(false);
+
+    }
+
 }
 
-function displayResults(data) {
 
-    const result = data.address_results;
+/* =========================
+   DISPLAY RESULT
+========================= */
 
-    const resultGrid =
-        document.getElementById("resultGrid");
+function displayResult(
+    data,
+    originalAddress
+) {
 
-    resultGrid.innerHTML = "";
+    const parsed =
+        data.parsed_address || {};
 
-    addResult("Original Address", result.original);
-    addResult("Landmark", result.landmark);
-    addResult("City", result.city);
-    addResult("State", result.state);
-    addResult("Pincode", result.pincode);
-    addResult("District", result.district);
-    addResult("Latitude", result.latitude);
-    addResult("Longitude", result.longitude);
 
-    document.getElementById("normalizedAddress").textContent =
-        data.normalized_address || "Not available";
+    const normalized =
+        data.normalized_address || {};
 
-    displayConfidence(data.confidence);
-    displayPincode(data.pincode_validation);
-    displayMap(result.latitude, result.longitude);
-}
 
-function addResult(label, value) {
+    const validation =
+        data.pincode_validation || {};
 
-    const box = document.createElement("div");
-    box.className = "result-box";
 
-    box.innerHTML = `
-        <div class="result-label">${label}</div>
-        <div class="result-value">
-            ${value ?? "Not available"}
+    const location =
+        data.location || {};
+
+
+    const confidence =
+        data.confidence || {};
+
+
+    const score =
+        Number(confidence.score) || 0;
+
+
+    const level =
+        String(
+            confidence.level || "LOW"
+        ).toUpperCase();
+
+
+    let confidenceClass =
+        "low";
+
+
+    if (score >= 80) {
+
+        confidenceClass = "high";
+
+    }
+
+    else if (score >= 50) {
+
+        confidenceClass = "medium";
+
+    }
+
+
+    const formattedAddress =
+        normalized.formatted_address ||
+        originalAddress;
+
+
+    const district =
+        validation.district ||
+        parsed.district ||
+        "Not available";
+
+
+    const state =
+        validation.state ||
+        parsed.state ||
+        "Not available";
+
+
+    const pincode =
+        validation.pincode ||
+        parsed.pincode ||
+        "Not available";
+
+
+    const latitude =
+        location.latitude ??
+        "Not available";
+
+
+    const longitude =
+        location.longitude ??
+        "Not available";
+
+
+    const decision =
+        confidence.decision ||
+        "Do not auto-confirm";
+
+
+    const evidence =
+        Array.isArray(
+            confidence.evidence
+        )
+            ? confidence.evidence
+            : [];
+
+
+    let evidenceHTML = "";
+
+
+    if (evidence.length > 0) {
+
+        evidenceHTML = evidence
+            .map(
+                item => `
+
+                    <div class="evidence-item">
+                        ${escapeHTML(item)}
+                    </div>
+
+                `
+            )
+            .join("");
+
+    }
+
+    else {
+
+        evidenceHTML = `
+
+            <div class="evidence-item">
+                Verification information returned
+                by the SmartGeoAI engine.
+            </div>
+
+        `;
+
+    }
+
+
+    resultSection.classList.remove(
+        "hidden"
+    );
+
+
+    result.innerHTML = `
+
+        <div class="result-box">
+
+            <div class="result-header">
+
+                <div class="result-title">
+
+                    <span class="section-label">
+                        RESOLUTION COMPLETE
+                    </span>
+
+                    <h2>
+                        Address Resolved
+                    </h2>
+
+                    <p>
+                        SmartGeoAI verification result
+                    </p>
+
+                </div>
+
+
+                <div class="
+                    confidence
+                    ${confidenceClass}
+                ">
+
+                    <span>
+                        ${score}%
+                    </span>
+
+                    <small>
+                        ${escapeHTML(level)}
+                        CONFIDENCE
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="info-grid">
+
+                <div class="info-card">
+
+                    <span>
+                        Normalized Address
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            formattedAddress
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <span>
+                        District
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            district
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <span>
+                        State
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            state
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <span>
+                        Pincode
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            pincode
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <span>
+                        Latitude
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            latitude
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div class="info-card">
+
+                    <span>
+                        Longitude
+                    </span>
+
+                    <strong>
+                        ${escapeHTML(
+                            longitude
+                        )}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="decision-card">
+
+                <div class="decision-top">
+
+                    <h3>
+                        Verification Decision
+                    </h3>
+
+                </div>
+
+                <p>
+                    ${escapeHTML(
+                        decision
+                    )}
+                </p>
+
+            </div>
+
+
+            <div class="verification">
+
+                <h3>
+                    Verification Details
+                </h3>
+
+                <div class="evidence-list">
+
+                    ${evidenceHTML}
+
+                </div>
+
+            </div>
+
         </div>
+
     `;
 
-    document
-        .getElementById("resultGrid")
-        .appendChild(box);
-}
 
-function displayConfidence(confidence) {
+    /* =========================
+       SHOW MAP
+    ========================= */
 
-    if (!confidence) return;
+    const validLatitude =
+        typeof location.latitude === "number" ||
+        !isNaN(
+            Number(location.latitude)
+        );
 
-    document.getElementById("confidenceScore").textContent =
-        confidence.score + "%";
 
-    document.getElementById("confidenceLevel").textContent =
-        confidence.level || "-";
+    const validLongitude =
+        typeof location.longitude === "number" ||
+        !isNaN(
+            Number(location.longitude)
+        );
 
-    document.getElementById("confidenceDecision").textContent =
-        confidence.decision || "-";
-
-    const evidenceList =
-        document.getElementById("evidenceList");
-
-    evidenceList.innerHTML = "";
-
-    if (Array.isArray(confidence.evidence)) {
-
-        confidence.evidence.forEach(function (item) {
-
-            const li = document.createElement("li");
-
-            li.textContent = item;
-
-            evidenceList.appendChild(li);
-
-        });
-    }
-}
-
-function displayPincode(validation) {
-
-    const element =
-        document.getElementById("pincodeStatus");
-
-    if (!validation) {
-        element.innerHTML = "";
-        return;
-    }
-
-    if (validation.valid) {
-
-        element.innerHTML = `
-            <div class="pincode-valid">
-                ✓ Pincode verified successfully
-                <br>
-                <small>
-                    ${validation.pincode || ""}
-                    • ${validation.district || ""}
-                    • ${validation.state || ""}
-                </small>
-            </div>
-        `;
-
-    } else {
-
-        element.innerHTML = `
-            <div class="pincode-invalid">
-                ✗ Pincode could not be verified.
-            </div>
-        `;
-    }
-}
-
-function displayMap(latitude, longitude) {
-
-    const mapFrame =
-        document.getElementById("mapFrame");
-
-    const coordinates =
-        document.getElementById("coordinates");
-
-    const mapLink =
-        document.getElementById("mapLink");
 
     if (
-        latitude === null ||
-        latitude === undefined ||
-        longitude === null ||
-        longitude === undefined
+        location.found === true &&
+        validLatitude &&
+        validLongitude
     ) {
 
-        coordinates.textContent =
-            "Coordinates unavailable";
+        showMap(
+            Number(location.latitude),
+            Number(location.longitude),
+            formattedAddress
+        );
 
-        mapFrame.src = "about:blank";
-
-        return;
     }
 
-    const lat = Number(latitude);
-    const lon = Number(longitude);
+    else {
 
-    coordinates.textContent =
-        lat + ", " + lon;
+        clearMap();
 
-    const delta = 0.015;
+    }
 
-    const embedUrl =
-        "https://www.openstreetmap.org/export/embed.html" +
-        "?bbox=" +
-        (lon - delta) +
-        "%2C" +
-        (lat - delta) +
-        "%2C" +
-        (lon + delta) +
-        "%2C" +
-        (lat + delta) +
-        "&layer=mapnik" +
-        "&marker=" +
-        lat +
-        "%2C" +
-        lon;
 
-    mapFrame.src = embedUrl;
+    window.scrollTo({
+        top:
+            resultSection.offsetTop - 90,
+        behavior: "smooth"
+    });
 
-    mapLink.href =
-        "https://www.openstreetmap.org/" +
-        "?mlat=" +
-        lat +
-        "&mlon=" +
-        lon +
-        "#map=15/" +
-        lat +
-        "/" +
-        lon;
+}
+
+
+/* =========================
+   MAP
+========================= */
+
+function showMap(
+    latitude,
+    longitude,
+    address
+) {
+
+    clearMap();
+
+
+    mapSection.classList.remove(
+        "hidden"
+    );
+
+
+    map =
+        L.map("map")
+            .setView(
+                [
+                    latitude,
+                    longitude
+                ],
+                15
+            );
+
+
+    L.tileLayer(
+        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            maxZoom: 19,
+
+            attribution:
+                "&copy; OpenStreetMap contributors"
+        }
+    ).addTo(map);
+
+
+    marker =
+        L.marker(
+            [
+                latitude,
+                longitude
+            ]
+        )
+        .addTo(map);
+
+
+    marker.bindPopup(
+        `
+        <strong>
+            Resolved Delivery Location
+        </strong>
+        <br><br>
+        ${escapeHTML(address)}
+        `
+    );
+
+
+    marker.openPopup();
+
+
+    setTimeout(
+        function () {
+
+            map.invalidateSize();
+
+        },
+        300
+    );
+
+
+    mapSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}
+
+
+/* =========================
+   CLEAR MAP
+========================= */
+
+function clearMap() {
+
+    if (map) {
+
+        map.remove();
+
+        map = null;
+
+        marker = null;
+    }
+
+
+    mapSection.classList.add(
+        "hidden"
+    );
+
+
+    const mapElement =
+        document.getElementById("map");
+
+
+    if (mapElement) {
+
+        mapElement.innerHTML = "";
+
+    }
+
+}
+
+
+/* =========================
+   ERROR
+========================= */
+
+function showError(
+    title,
+    message
+) {
+
+    resultSection.classList.remove(
+        "hidden"
+    );
+
+
+    mapSection.classList.add(
+        "hidden"
+    );
+
+
+    result.innerHTML = `
+
+        <div class="result-box">
+
+            <div class="error">
+
+                <strong>
+                    ${escapeHTML(title)}
+                </strong>
+
+                <span>
+                    ${escapeHTML(message)}
+                </span>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    window.scrollTo({
+        top:
+            resultSection.offsetTop - 90,
+
+        behavior: "smooth"
+    });
+
+}
+
+
+/* =========================
+   LOADING
+========================= */
+
+function setLoading(
+    loading
+) {
+
+    resolveButton.disabled =
+        loading;
+
+
+    if (loading) {
+
+        buttonText.textContent =
+            "Resolving...";
+
+        loader.classList.remove(
+            "hidden"
+        );
+
+    }
+
+    else {
+
+        buttonText.textContent =
+            "Resolve Address";
+
+        loader.classList.add(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+/* =========================
+   SECURITY
+========================= */
+
+function escapeHTML(value) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        String(value);
+
+
+    return div.innerHTML;
+
 }
